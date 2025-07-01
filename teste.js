@@ -1,4 +1,3 @@
-// Chefe 2k25 - Double Black atualizado com Branco e layout fixado
 (() => {
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
@@ -23,7 +22,7 @@
       background-color: ${corData.cor}; display: flex;
       justify-content: center; align-items: center;
       font-size: 12px; font-weight: bold;
-      color: ${corData.texto}; margin: 0;
+      color: ${corData.texto};
     `;
     tile.textContent = numero;
     return tile;
@@ -204,8 +203,12 @@
   document.querySelector('.closeBtn').addEventListener('click', () => {
     document.getElementById('blazeMenu').style.display = 'none';
   });
+
+  // 🔄 Corrigido: ao reabrir o menu, força re-render dos últimos resultados
   document.querySelector('.minBtn').addEventListener('click', () => {
-    corpo.forEach(div => div.style.display = (div.style.display === 'none') ? 'block' : 'none');
+    const mostrar = corpo[0].style.display === 'none';
+    corpo.forEach(div => div.style.display = mostrar ? 'block' : 'none');
+    if (mostrar) atualizarUltimos();
   });
 
   document.addEventListener('dblclick', () => {
@@ -213,6 +216,7 @@
     el.style.display = (el.style.display === 'none') ? 'block' : 'none';
   });
 
+  // Arrastar
   let isDragging = false, offsetX, offsetY;
   menu.addEventListener('mousedown', e => {
     isDragging = true;
@@ -227,6 +231,7 @@
     }
   });
 
+  // Touch
   menu.addEventListener('touchstart', e => {
     isDragging = true;
     const touch = e.touches[0];
