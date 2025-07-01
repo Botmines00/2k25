@@ -22,7 +22,7 @@
       background-color: ${corData.cor}; display: flex;
       justify-content: center; align-items: center;
       font-size: 12px; font-weight: bold;
-      color: ${corData.texto};
+      color: ${corData.texto}; margin: 0 2px;
     `;
     tile.textContent = numero;
     return tile;
@@ -204,11 +204,10 @@
     document.getElementById('blazeMenu').style.display = 'none';
   });
 
-  // 🔄 Corrigido: ao reabrir o menu, força re-render dos últimos resultados
   document.querySelector('.minBtn').addEventListener('click', () => {
     const mostrar = corpo[0].style.display === 'none';
     corpo.forEach(div => div.style.display = mostrar ? 'block' : 'none');
-    if (mostrar) atualizarUltimos();
+    if (mostrar) setTimeout(atualizarUltimos, 50);
   });
 
   document.addEventListener('dblclick', () => {
@@ -216,7 +215,6 @@
     el.style.display = (el.style.display === 'none') ? 'block' : 'none';
   });
 
-  // Arrastar
   let isDragging = false, offsetX, offsetY;
   menu.addEventListener('mousedown', e => {
     isDragging = true;
@@ -231,7 +229,6 @@
     }
   });
 
-  // Touch
   menu.addEventListener('touchstart', e => {
     isDragging = true;
     const touch = e.touches[0];
