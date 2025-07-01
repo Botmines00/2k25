@@ -1,4 +1,4 @@
-// Chefe 2k25 - Double Black atualizado com Branco e Minimizar
+// Chefe 2k25 - Double Black atualizado com Branco e layout fixado
 (() => {
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
@@ -23,7 +23,7 @@
       background-color: ${corData.cor}; display: flex;
       justify-content: center; align-items: center;
       font-size: 12px; font-weight: bold;
-      color: ${corData.texto}; margin: 0 2px;
+      color: ${corData.texto}; margin: 0;
     `;
     tile.textContent = numero;
     return tile;
@@ -68,7 +68,7 @@
                          (d.roll >= 8) ? '👉 Apostar no Vermelho' :
                          '👉 Apostar no Vermelho ou Preto';
         document.getElementById('sugestaoBox').textContent = sugestao;
-        logicaPrevisaoBranco(d); // verificar branco
+        logicaPrevisaoBranco(d);
         document.getElementById('resultSmBox').style.backgroundColor = cor.cor;
         sincronizarBarra();
         atualizarUltimos();
@@ -157,7 +157,10 @@
     }
     #ultimosResultados {
       display: flex;
+      flex-direction: row;
       justify-content: center;
+      flex-wrap: nowrap;
+      gap: 4px;
       margin: 5px 0;
     }
     .statusOnline {
