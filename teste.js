@@ -1,4 +1,3 @@
-// Chefe 2k25 - Double Black com lógica do Branco
 (() => {
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
@@ -12,6 +11,7 @@
     return coresMap[2];
   };
 
+  let historico = [];
   let ultimoId = null;
 
   function criarTile(numero) {
@@ -29,38 +29,18 @@
     return tile;
   }
 
-  function atualizarUltimos() {
-    const entradas = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'))
-      .slice(0, 5).reverse()
-      .map(tile => parseInt(tile.innerText.trim()))
-      .filter(n => !isNaN(n));
-
-    const box = document.getElementById('ultimosResultados');
-    if (!box) return;
-    box.innerHTML = '';
-    entradas.forEach(num => box.appendChild(criarTile(num)));
-  }
-
-  // 🔍 Lógica de previsão do branco
-  let historico = [];
-
   function verificarChanceBranco(lista) {
-    const sugestaoBox = document.getElementById('sugestaoBox');
+    const box = document.getElementById('sugestaoBox');
     const ultimos = lista.slice(-6);
-
     const semBranco = ultimos.every(n => n !== 0);
     const soma2 = ultimos.slice(-2).reduce((a, b) => a + b, 0);
     const ultCor = getCorPorNumero(ultimos[ultimos.length - 1]).nome;
     const repeticoes = ultimos.filter(n => getCorPorNumero(n).nome === ultCor).length;
 
-    if (
-      (semBranco && ultimos.length >= 6) ||
-      [6, 9, 22].includes(soma2) ||
-      repeticoes >= 3
-    ) {
-      sugestaoBox.textContent = '🔍 POSSÍVEL BRANCO! ⚪️';
-      sugestaoBox.style.background = 'white';
-      sugestaoBox.style.color = 'black';
+    if ((semBranco && ultimos.length >= 6) || [6, 9, 22].includes(soma2) || repeticoes >= 3) {
+      box.textContent = '🔍 POSSÍVEL BRANCO ⚪️';
+      box.style.background = 'white';
+      box.style.color = 'black';
     }
   }
 
@@ -71,25 +51,22 @@
         const d = data[0];
         if (!d || d.id === ultimoId) return;
         ultimoId = d.id;
+        historico.push(d.roll);
+        if (historico.length > 10) historico.shift();
 
         const cor = getCorPorNumero(d.roll);
         document.getElementById('resultNumberCircle').textContent = d.roll;
         document.getElementById('resultNumberCircle').style.background = cor.cor;
         document.getElementById('resultNumberCircle').style.color = cor.texto;
         document.getElementById('legendaResultado').textContent = `Resultado: ${cor.nome}`;
-
-        historico.push(d.roll);
-        if (historico.length > 10) historico.shift();
-
-        document.getElementById('sugestaoBox').textContent =
-          (d.roll >= 1 && d.roll <= 7) ? '👉 Apostar no Preto' :
-          (d.roll >= 8) ? '👉 Apostar no Vermelho' :
-          '👉 Apostar no Vermelho ou Preto';
-
         document.getElementById('resultSmBox').style.backgroundColor = cor.cor;
-        sincronizarBarra();
-        atualizarUltimos();
+
+        const ultimosBox = document.getElementById('ultimosResultados');
+        ultimosBox.innerHTML = '';
+        historico.slice().reverse().forEach(n => ultimosBox.appendChild(criarTile(n)));
+
         verificarChanceBranco(historico);
+        sincronizarBarra();
       })
       .catch(() => {
         document.getElementById('sugestaoBox').textContent = '⚠️ Erro na API';
@@ -98,79 +75,93 @@
 
   function sincronizarBarra() {
     const b = document.getElementById('progressoInterno');
+    if (!b) return;
     b.style.animation = 'none';
     void b.offsetWidth;
     b.style.animation = 'descarregar 15s linear forwards';
   }
 
-  let tempoAnterior = '';
-  function verificarTempoBlaze() {
-    const tempo = document.querySelector('.time-left span')?.textContent?.trim();
-    if (!tempo || tempo === tempoAnterior) return;
-    tempoAnterior = tempo;
-    const t = document.getElementById('statusRoleta');
-    if (t) t.textContent = `🕒 Girando em: ${tempo}`;
-  }
+  // === Estilos do menu ===
+  const style = document.createElement('style');
+  style.textContent = `
+    #blazeMenu {
+      position: fixed; top: 100px; left: 20px; width: 230px;
+      background: #1e1e1e; color: white;
+      font-family: sans-serif; border-radius: 10px;
+      box-shadow: 0 0 10px #00ff00; padding: 10px;
+      z-index: 99999; user-select: none;
+    }
+    #blazeMenu h3 {
+      margin: 0 0 6px; color: #54eb00;
+      font-size: 14px; text-align: center;
+    }
+    .closeBtn {
+      position: absolute; right: 8px; top: 5px;
+      color: #ff4444; cursor: pointer;
+      font-size: 16px; font-weight: bold;
+    }
+    #resultSmBox {
+      width: 32px; height: 32px;
+      display: flex; justify-content: center;
+      align-items: center; margin: 5px auto;
+      border-radius: 6px;
+    }
+    #resultNumberCircle {
+      width: 24px; height: 24px;
+      border-radius: 50%; text-align: center;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-weight: bold; font-size: 12px;
+    }
+    #legendaResultado {
+      font-size: 12px; text-align: center;
+      margin: 2px 0; color: #ccc;
+    }
+    #barraGiro {
+      width: 100%; height: 6px;
+      background: #333; border-radius: 4px;
+      overflow: hidden;
+    }
+    #progressoInterno {
+      width: 100%; height: 100%;
+      background-color: #ff3c59;
+      animation: descarregar 15s linear forwards;
+    }
+    @keyframes descarregar {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+    #sugestaoBox {
+      text-align: center; font-size: 13px;
+      padding: 6px; margin: 6px 0;
+      background: #2c2c2c; border-radius: 4px;
+      font-weight: bold;
+    }
+    #ultimosResultados {
+      display: flex;
+      justify-content: center;
+      margin: 5px 0;
+    }
+  `;
+  document.head.appendChild(style);
 
-  // CSS e Menu continuam os mesmos...
-  // (Use o resto do código igual ao seu original, sem mudanças)
-
-  // Insere o menu
   if (document.getElementById('blazeMenu')) document.getElementById('blazeMenu').remove();
+
   const menu = document.createElement('div');
   menu.id = 'blazeMenu';
   menu.innerHTML = `
-    <h3>🤖 Double Black - 2k25 <span class="closeBtn">×</span></h3>
+    <h3>🤖 Chefe Branco 2k25 <span class="closeBtn">×</span></h3>
     <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
     <div id="legendaResultado">Resultado: ...</div>
-    <div id="statusRoleta">🕒 Girando em: ...</div>
     <div id="barraGiro"><div id="progressoInterno"></div></div>
     <div id="sugestaoBox">👉 Aguardando...</div>
     <div id="ultimosResultados"></div>
-    <div class="statusOnline"><span class="dotOnline"></span>Online</div>
   `;
   document.body.appendChild(menu);
 
-  // Arrastar e ocultar menu
-  let isDragging = false, offsetX, offsetY;
-  menu.addEventListener('mousedown', e => {
-    isDragging = true;
-    offsetX = e.offsetX;
-    offsetY = e.offsetY;
-  });
-  document.addEventListener('mouseup', () => isDragging = false);
-  document.addEventListener('mousemove', e => {
-    if (isDragging) {
-      menu.style.left = `${e.clientX - offsetX}px`;
-      menu.style.top = `${e.clientY - offsetY}px`;
-    }
-  });
-  menu.addEventListener('touchstart', e => {
-    isDragging = true;
-    const touch = e.touches[0];
-    offsetX = touch.clientX - menu.getBoundingClientRect().left;
-    offsetY = touch.clientY - menu.getBoundingClientRect().top;
-  });
-  document.addEventListener('touchend', () => isDragging = false);
-  document.addEventListener('touchmove', e => {
-    if (isDragging) {
-      const touch = e.touches[0];
-      menu.style.left = `${touch.clientX - offsetX}px`;
-      menu.style.top = `${touch.clientY - offsetY}px`;
-    }
-  });
-
   document.querySelector('.closeBtn').addEventListener('click', () => {
-    document.getElementById('blazeMenu').style.display = 'none';
+    document.getElementById('blazeMenu').remove();
   });
 
-  document.addEventListener('dblclick', () => {
-    const el = document.getElementById('blazeMenu');
-    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-  });
-
-  atualizarResultado();
-  atualizarUltimos();
   setInterval(atualizarResultado, 2000);
-  setInterval(verificarTempoBlaze, 1000);
 })();
