@@ -1,1 +1,176 @@
-function _0x757a(){const _0x41a446=['#1d2027','cor','⬜\x20Branco','innerHTML','trim','clientY','offsetWidth','mouseup','33RcpzOX','getBoundingClientRect','.closeBtn','#ff3c59','1807456BZTcFO','click','left','top','addEventListener','backgroundColor','tile-wrapper','sugestaoBox','resultNumberCircle','getElementById','texto','white','offsetY','color','\x0a\x20\x20\x20\x20<span\x20class=\x22minBtn\x22>☰</span>\x0a\x20\x20\x20\x20<h3>🤖\x20Double\x20Black\x20-\x202k25\x20<span\x20class=\x22closeBtn\x22>×</span></h3>\x0a\x20\x20\x20\x20<div\x20id=\x22resultSmBox\x22><div\x20id=\x22resultNumberCircle\x22></div></div>\x0a\x20\x20\x20\x20<div\x20id=\x22legendaResultado\x22>Resultado:\x20...</div>\x0a\x20\x20\x20\x20<div\x20id=\x22statusRoleta\x22>🕒\x20Girando\x20em:\x20...</div>\x0a\x20\x20\x20\x20<div\x20id=\x22barraGiro\x22><div\x20id=\x22progressoInterno\x22></div></div>\x0a\x20\x20\x20\x20<div\x20id=\x22sugestaoBox\x22>👉\x20Aguardando...</div>\x0a\x20\x20\x20\x20<div\x20id=\x22ultimosResultados\x22></div>\x0a\x20\x20\x20\x20<div\x20class=\x22statusOnline\x22><span\x20class=\x22dotOnline\x22></span>Online</div>\x0a\x20\x20','touchstart','blazeMenu','181905bGqLFV','touchend','84cbYYcO','touchmove','getMinutes','querySelector','animation','remove','reverse','createElement','mousedown','.time-left\x20span','none','65755SakqWn',';\x20margin:\x200\x202px;\x0a\x20\x20\x20\x20','display','map','⚠️\x20Erro\x20na\x20API','appendChild','8MyqgDy','mousemove','h3\x20~\x20div','legendaResultado','statusRoleta','\x0a\x20\x20\x20\x20\x20\x20width:\x2024px;\x20height:\x2024px;\x20border-radius:\x204px;\x0a\x20\x20\x20\x20\x20\x20background-color:\x20','Resultado:\x20','roll','https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1','offsetX','dblclick','className','descarregar\x2015s\x20linear\x20forwards','touches','background','748858kDUaqd','ultimosResultados','⬛\x20Preto','block','style','533532znYZXg','18LXrOSC','then','querySelectorAll','textContent','filter','3557790vIXLjY','nome','👉\x20Apostar\x20no\x20Vermelho\x20ou\x20Preto','black','created_at','716528EuSizs','clientX','forEach'];_0x757a=function(){return _0x41a446;};return _0x757a();}function _0x3b98(_0x372393,_0x1484f9){const _0x757a12=_0x757a();return _0x3b98=function(_0x3b980a,_0x17ee5a){_0x3b980a=_0x3b980a-0xbf;let _0x2faf65=_0x757a12[_0x3b980a];return _0x2faf65;},_0x3b98(_0x372393,_0x1484f9);}(function(_0xed3b02,_0x3acf9c){const _0x31ce38=_0x3b98,_0x5cf299=_0xed3b02();while(!![]){try{const _0x5a3d8f=-parseInt(_0x31ce38(0xcb))/0x1+-parseInt(_0x31ce38(0xed))/0x2+parseInt(_0x31ce38(0xf2))/0x3*(-parseInt(_0x31ce38(0xde))/0x4)+parseInt(_0x31ce38(0xd8))/0x5*(parseInt(_0x31ce38(0xcd))/0x6)+-parseInt(_0x31ce38(0x10c))/0x7+-parseInt(_0x31ce38(0xfd))/0x8*(-parseInt(_0x31ce38(0xf3))/0x9)+-parseInt(_0x31ce38(0xf8))/0xa*(-parseInt(_0x31ce38(0x108))/0xb);if(_0x5a3d8f===_0x3acf9c)break;else _0x5cf299['push'](_0x5cf299['shift']());}catch(_0x75da37){_0x5cf299['push'](_0x5cf299['shift']());}}}(_0x757a,0x3f901),((()=>{const _0x40d081=_0x3b98,_0x32393c={0x0:{'nome':_0x40d081(0x102),'cor':'white','texto':_0x40d081(0xfb)},0x1:{'nome':'🟥\x20Vermelho','cor':_0x40d081(0x10b),'texto':_0x40d081(0xc5)},0x2:{'nome':_0x40d081(0xef),'cor':_0x40d081(0x100),'texto':_0x40d081(0xc5)}},_0x16bbb0=_0x440558=>{if(_0x440558===0x0)return _0x32393c[0x0];if(_0x440558>=0x1&&_0x440558<=0x7)return _0x32393c[0x1];return _0x32393c[0x2];};let _0x3bb728=null;function _0x32229b(_0x152a01){const _0x446c14=_0x40d081,_0x19441c=_0x16bbb0(_0x152a01),_0x1864f8=document[_0x446c14(0xd4)]('div');return _0x1864f8[_0x446c14(0xe9)]=_0x446c14(0xc0),_0x1864f8[_0x446c14(0xf1)]=_0x446c14(0xe3)+_0x19441c['cor']+';\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20font-size:\x2012px;\x20font-weight:\x20bold;\x0a\x20\x20\x20\x20\x20\x20color:\x20'+_0x19441c[_0x446c14(0xc4)]+_0x446c14(0xd9),_0x1864f8['textContent']=_0x152a01,_0x1864f8;}function _0x351b3b(_0x35aaa4){const _0x187d67=_0x40d081,_0x524b64=new Date(_0x35aaa4[_0x187d67(0xfc)]),_0x51775d=_0x524b64[_0x187d67(0xcf)](),_0x218686=document['getElementById'](_0x187d67(0xc1));_0x51775d%0xa===0x0&&(_0x218686[_0x187d67(0xf6)]+='\x0a⚪\x20Possível\x20Branco\x20(Minuto\x20termina\x20com\x200)');}function _0x21e3dc(){const _0x597d50=_0x40d081,_0x1d2a79=Array['from'](document[_0x597d50(0xf5)]('#roulette-recent\x20.entry\x20.roulette-tile'))['slice'](0x0,0x5)[_0x597d50(0xd3)]()[_0x597d50(0xdb)](_0x256a1e=>parseInt(_0x256a1e['innerText'][_0x597d50(0x104)]()))[_0x597d50(0xf7)](_0x5d3643=>!isNaN(_0x5d3643)),_0xf52774=document[_0x597d50(0xc3)](_0x597d50(0xee));if(!_0xf52774)return;_0xf52774[_0x597d50(0x103)]='',_0x1d2a79[_0x597d50(0xff)](_0x599b81=>_0xf52774[_0x597d50(0xdd)](_0x32229b(_0x599b81)));}function _0x4971ea(){const _0x7e8484=_0x40d081;fetch(_0x7e8484(0xe6))[_0x7e8484(0xf4)](_0x15a5e9=>_0x15a5e9['json']())[_0x7e8484(0xf4)](_0x49f359=>{const _0x505162=_0x7e8484,_0x2c3009=_0x49f359[0x0];if(!_0x2c3009||_0x2c3009['id']===_0x3bb728)return;_0x3bb728=_0x2c3009['id'];const _0x3239a9=_0x16bbb0(_0x2c3009['roll']);document[_0x505162(0xc3)]('resultNumberCircle')['textContent']=_0x2c3009[_0x505162(0xe5)],document['getElementById'](_0x505162(0xc2))['style'][_0x505162(0xec)]=_0x3239a9[_0x505162(0x101)],document[_0x505162(0xc3)]('resultNumberCircle')['style'][_0x505162(0xc7)]=_0x3239a9[_0x505162(0xc4)],document[_0x505162(0xc3)](_0x505162(0xe1))['textContent']=_0x505162(0xe4)+_0x3239a9[_0x505162(0xf9)];const _0x828dd4=_0x2c3009[_0x505162(0xe5)]>=0x1&&_0x2c3009[_0x505162(0xe5)]<=0x7?'👉\x20Apostar\x20no\x20Preto':_0x2c3009[_0x505162(0xe5)]>=0x8?'👉\x20Apostar\x20no\x20Vermelho':_0x505162(0xfa);document[_0x505162(0xc3)](_0x505162(0xc1))[_0x505162(0xf6)]=_0x828dd4,_0x351b3b(_0x2c3009),document['getElementById']('resultSmBox')[_0x505162(0xf1)][_0x505162(0xbf)]=_0x3239a9[_0x505162(0x101)],_0x55c348(),_0x21e3dc();})['catch'](()=>{const _0xc40fc6=_0x7e8484;document[_0xc40fc6(0xc3)](_0xc40fc6(0xc1))[_0xc40fc6(0xf6)]=_0xc40fc6(0xdc);});}function _0x55c348(){const _0x11f5c3=_0x40d081,_0x55b75f=document[_0x11f5c3(0xc3)]('progressoInterno');_0x55b75f['style'][_0x11f5c3(0xd1)]=_0x11f5c3(0xd7),void _0x55b75f[_0x11f5c3(0x106)],_0x55b75f['style'][_0x11f5c3(0xd1)]=_0x11f5c3(0xea);}let _0x10f34e='';function _0x463ccd(){const _0x442c0f=_0x40d081,_0x2fc96d=document['querySelector'](_0x442c0f(0xd6))?.[_0x442c0f(0xf6)]?.[_0x442c0f(0x104)]();if(!_0x2fc96d||_0x2fc96d===_0x10f34e)return;_0x10f34e=_0x2fc96d;const _0x5a0a72=document[_0x442c0f(0xc3)](_0x442c0f(0xe2));if(_0x5a0a72)_0x5a0a72[_0x442c0f(0xf6)]='🕒\x20Girando\x20em:\x20'+_0x2fc96d;}const _0x2dd5fd=document[_0x40d081(0xd4)](_0x40d081(0xf1));_0x2dd5fd[_0x40d081(0xf6)]='\x0a\x20\x20\x20\x20#blazeMenu\x20{\x0a\x20\x20\x20\x20\x20\x20position:\x20fixed;\x20top:\x20100px;\x20left:\x2020px;\x20width:\x20230px;\x0a\x20\x20\x20\x20\x20\x20background:\x20#1e1e1e;\x20color:\x20white;\x0a\x20\x20\x20\x20\x20\x20font-family:\x20sans-serif;\x20border-radius:\x2010px;\x0a\x20\x20\x20\x20\x20\x20box-shadow:\x200\x200\x2010px\x20#00ff00;\x20padding:\x2010px;\x0a\x20\x20\x20\x20\x20\x20z-index:\x2099999;\x20user-select:\x20none;\x0a\x20\x20\x20\x20\x20\x20touch-action:\x20none;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#blazeMenu\x20h3\x20{\x0a\x20\x20\x20\x20\x20\x20margin:\x200\x200\x206px;\x20color:\x20#54eb00;\x0a\x20\x20\x20\x20\x20\x20font-size:\x2014px;\x20text-align:\x20center;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20.closeBtn\x20{\x0a\x20\x20\x20\x20\x20\x20position:\x20absolute;\x20right:\x208px;\x20top:\x205px;\x0a\x20\x20\x20\x20\x20\x20color:\x20#ff4444;\x20cursor:\x20pointer;\x0a\x20\x20\x20\x20\x20\x20font-size:\x2016px;\x20font-weight:\x20bold;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20.minBtn\x20{\x0a\x20\x20\x20\x20\x20\x20position:\x20absolute;\x20left:\x208px;\x20top:\x205px;\x0a\x20\x20\x20\x20\x20\x20color:\x20#ccc;\x20cursor:\x20pointer;\x0a\x20\x20\x20\x20\x20\x20font-size:\x2016px;\x20font-weight:\x20bold;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#resultSmBox\x20{\x0a\x20\x20\x20\x20\x20\x20width:\x2032px;\x20height:\x2032px;\x0a\x20\x20\x20\x20\x20\x20display:\x20flex;\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20align-items:\x20center;\x20margin:\x205px\x20auto;\x0a\x20\x20\x20\x20\x20\x20border-radius:\x206px;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#resultNumberCircle\x20{\x0a\x20\x20\x20\x20\x20\x20width:\x2024px;\x20height:\x2024px;\x0a\x20\x20\x20\x20\x20\x20border-radius:\x2050%;\x20text-align:\x20center;\x0a\x20\x20\x20\x20\x20\x20display:\x20flex;\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20font-weight:\x20bold;\x20font-size:\x2012px;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#legendaResultado,\x20#statusRoleta\x20{\x0a\x20\x20\x20\x20\x20\x20font-size:\x2012px;\x20text-align:\x20center;\x0a\x20\x20\x20\x20\x20\x20margin:\x202px\x200;\x20color:\x20#ccc;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#barraGiro\x20{\x0a\x20\x20\x20\x20\x20\x20width:\x20100%;\x20height:\x206px;\x0a\x20\x20\x20\x20\x20\x20background:\x20#333;\x20border-radius:\x204px;\x0a\x20\x20\x20\x20\x20\x20overflow:\x20hidden;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#progressoInterno\x20{\x0a\x20\x20\x20\x20\x20\x20width:\x20100%;\x20height:\x20100%;\x0a\x20\x20\x20\x20\x20\x20background-color:\x20#ff3c59;\x0a\x20\x20\x20\x20\x20\x20animation:\x20descarregar\x2015s\x20linear\x20forwards;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20@keyframes\x20descarregar\x20{\x0a\x20\x20\x20\x20\x20\x20from\x20{\x20width:\x20100%;\x20}\x0a\x20\x20\x20\x20\x20\x20to\x20{\x20width:\x200%;\x20}\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#sugestaoBox\x20{\x0a\x20\x20\x20\x20\x20\x20text-align:\x20center;\x20font-size:\x2013px;\x0a\x20\x20\x20\x20\x20\x20padding:\x206px;\x20margin:\x206px\x200;\x0a\x20\x20\x20\x20\x20\x20background:\x20#2c2c2c;\x20border-radius:\x204px;\x0a\x20\x20\x20\x20\x20\x20font-weight:\x20bold;\x20white-space:\x20pre-line;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20#ultimosResultados\x20{\x0a\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20flex-direction:\x20row;\x0a\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20flex-wrap:\x20nowrap;\x0a\x20\x20\x20\x20\x20\x20gap:\x204px;\x0a\x20\x20\x20\x20\x20\x20margin:\x205px\x200;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20.statusOnline\x20{\x0a\x20\x20\x20\x20\x20\x20text-align:\x20center;\x20font-size:\x2011px;\x0a\x20\x20\x20\x20\x20\x20margin-top:\x204px;\x20color:\x20#00ff00;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20.dotOnline\x20{\x0a\x20\x20\x20\x20\x20\x20width:\x208px;\x20height:\x208px;\x0a\x20\x20\x20\x20\x20\x20background-color:\x20#00ff00;\x0a\x20\x20\x20\x20\x20\x20border-radius:\x2050%;\x0a\x20\x20\x20\x20\x20\x20display:\x20inline-block;\x0a\x20\x20\x20\x20\x20\x20margin-right:\x205px;\x0a\x20\x20\x20\x20\x20\x20animation:\x20pulse\x201.5s\x20infinite;\x0a\x20\x20\x20\x20}\x0a\x20\x20\x20\x20@keyframes\x20pulse\x20{\x0a\x20\x20\x20\x20\x20\x200%\x20{\x20transform:\x20scale(1);\x20opacity:\x200.8;\x20}\x0a\x20\x20\x20\x20\x20\x2050%\x20{\x20transform:\x20scale(1.6);\x20opacity:\x200.4;\x20}\x0a\x20\x20\x20\x20\x20\x20100%\x20{\x20transform:\x20scale(1);\x20opacity:\x200.8;\x20}\x0a\x20\x20\x20\x20}\x0a\x20\x20',document['head'][_0x40d081(0xdd)](_0x2dd5fd);if(document[_0x40d081(0xc3)]('blazeMenu'))document[_0x40d081(0xc3)](_0x40d081(0xca))[_0x40d081(0xd2)]();const _0x4d3b63=document[_0x40d081(0xd4)]('div');_0x4d3b63['id']=_0x40d081(0xca),_0x4d3b63['innerHTML']=_0x40d081(0xc8),document['body']['appendChild'](_0x4d3b63);const _0x55cacf=_0x4d3b63[_0x40d081(0xf5)](_0x40d081(0xe0));document[_0x40d081(0xd0)](_0x40d081(0x10a))[_0x40d081(0x110)](_0x40d081(0x10d),()=>{const _0x36b265=_0x40d081;document[_0x36b265(0xc3)](_0x36b265(0xca))[_0x36b265(0xf1)][_0x36b265(0xda)]=_0x36b265(0xd7);}),document[_0x40d081(0xd0)]('.minBtn')['addEventListener'](_0x40d081(0x10d),()=>{const _0x5e43ab=_0x40d081,_0x153195=_0x55cacf[0x0][_0x5e43ab(0xf1)]['display']===_0x5e43ab(0xd7);_0x55cacf[_0x5e43ab(0xff)](_0x497414=>_0x497414[_0x5e43ab(0xf1)][_0x5e43ab(0xda)]=_0x153195?_0x5e43ab(0xf0):_0x5e43ab(0xd7));if(_0x153195)setTimeout(_0x21e3dc,0x32);}),document[_0x40d081(0x110)](_0x40d081(0xe8),()=>{const _0xabe2d2=_0x40d081,_0x3bc06f=document[_0xabe2d2(0xc3)](_0xabe2d2(0xca));_0x3bc06f['style'][_0xabe2d2(0xda)]=_0x3bc06f[_0xabe2d2(0xf1)][_0xabe2d2(0xda)]==='none'?_0xabe2d2(0xf0):_0xabe2d2(0xd7);});let _0x59b8a3=![],_0xff736e,_0x48e3a8;_0x4d3b63[_0x40d081(0x110)](_0x40d081(0xd5),_0x54417a=>{const _0x51752b=_0x40d081;_0x59b8a3=!![],_0xff736e=_0x54417a[_0x51752b(0xe7)],_0x48e3a8=_0x54417a[_0x51752b(0xc6)];}),document[_0x40d081(0x110)](_0x40d081(0x107),()=>_0x59b8a3=![]),document[_0x40d081(0x110)](_0x40d081(0xdf),_0x26cf02=>{const _0x319ab6=_0x40d081;_0x59b8a3&&(_0x4d3b63[_0x319ab6(0xf1)][_0x319ab6(0x10e)]=_0x26cf02[_0x319ab6(0xfe)]-_0xff736e+'px',_0x4d3b63[_0x319ab6(0xf1)][_0x319ab6(0x10f)]=_0x26cf02[_0x319ab6(0x105)]-_0x48e3a8+'px');}),_0x4d3b63[_0x40d081(0x110)](_0x40d081(0xc9),_0x4fce73=>{const _0x458b6b=_0x40d081;_0x59b8a3=!![];const _0xa4bfbc=_0x4fce73[_0x458b6b(0xeb)][0x0];_0xff736e=_0xa4bfbc['clientX']-_0x4d3b63[_0x458b6b(0x109)]()[_0x458b6b(0x10e)],_0x48e3a8=_0xa4bfbc[_0x458b6b(0x105)]-_0x4d3b63[_0x458b6b(0x109)]()['top'];}),document['addEventListener'](_0x40d081(0xcc),()=>_0x59b8a3=![]),document[_0x40d081(0x110)](_0x40d081(0xce),_0x5b7efc=>{const _0x5afc02=_0x40d081;if(_0x59b8a3){const _0x3f024a=_0x5b7efc[_0x5afc02(0xeb)][0x0];_0x4d3b63['style'][_0x5afc02(0x10e)]=_0x3f024a['clientX']-_0xff736e+'px',_0x4d3b63[_0x5afc02(0xf1)][_0x5afc02(0x10f)]=_0x3f024a['clientY']-_0x48e3a8+'px';}}),_0x4971ea(),_0x21e3dc(),setInterval(_0x4971ea,0x7d0),setInterval(_0x463ccd,0x3e8);})()));
+// Chefe 2k25 - Double Black com lógica do Branco
+(() => {
+  const coresMap = {
+    0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
+    1: { nome: '🟥 Vermelho', cor: '#ff3c59', texto: 'white' },
+    2: { nome: '⬛ Preto', cor: '#1d2027', texto: 'white' },
+  };
+
+  const getCorPorNumero = (num) => {
+    if (num === 0) return coresMap[0];
+    if (num >= 1 && num <= 7) return coresMap[1];
+    return coresMap[2];
+  };
+
+  let ultimoId = null;
+
+  function criarTile(numero) {
+    const corData = getCorPorNumero(numero);
+    const tile = document.createElement('div');
+    tile.className = 'tile-wrapper';
+    tile.style = `
+      width: 24px; height: 24px; border-radius: 4px;
+      background-color: ${corData.cor}; display: flex;
+      justify-content: center; align-items: center;
+      font-size: 12px; font-weight: bold;
+      color: ${corData.texto}; margin: 0 2px;
+    `;
+    tile.textContent = numero;
+    return tile;
+  }
+
+  function atualizarUltimos() {
+    const entradas = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'))
+      .slice(0, 5).reverse()
+      .map(tile => parseInt(tile.innerText.trim()))
+      .filter(n => !isNaN(n));
+
+    const box = document.getElementById('ultimosResultados');
+    if (!box) return;
+    box.innerHTML = '';
+    entradas.forEach(num => box.appendChild(criarTile(num)));
+  }
+
+  // 🔍 Lógica de previsão do branco
+  let historico = [];
+
+  function verificarChanceBranco(lista) {
+    const sugestaoBox = document.getElementById('sugestaoBox');
+    const ultimos = lista.slice(-6);
+
+    const semBranco = ultimos.every(n => n !== 0);
+    const soma2 = ultimos.slice(-2).reduce((a, b) => a + b, 0);
+    const ultCor = getCorPorNumero(ultimos[ultimos.length - 1]).nome;
+    const repeticoes = ultimos.filter(n => getCorPorNumero(n).nome === ultCor).length;
+
+    if (
+      (semBranco && ultimos.length >= 6) ||
+      [6, 9, 22].includes(soma2) ||
+      repeticoes >= 3
+    ) {
+      sugestaoBox.textContent = '🔍 POSSÍVEL BRANCO! ⚪️';
+      sugestaoBox.style.background = 'white';
+      sugestaoBox.style.color = 'black';
+    }
+  }
+
+  function atualizarResultado() {
+    fetch("https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1")
+      .then(r => r.json())
+      .then(data => {
+        const d = data[0];
+        if (!d || d.id === ultimoId) return;
+        ultimoId = d.id;
+
+        const cor = getCorPorNumero(d.roll);
+        document.getElementById('resultNumberCircle').textContent = d.roll;
+        document.getElementById('resultNumberCircle').style.background = cor.cor;
+        document.getElementById('resultNumberCircle').style.color = cor.texto;
+        document.getElementById('legendaResultado').textContent = `Resultado: ${cor.nome}`;
+
+        historico.push(d.roll);
+        if (historico.length > 10) historico.shift();
+
+        document.getElementById('sugestaoBox').textContent =
+          (d.roll >= 1 && d.roll <= 7) ? '👉 Apostar no Preto' :
+          (d.roll >= 8) ? '👉 Apostar no Vermelho' :
+          '👉 Apostar no Vermelho ou Preto';
+
+        document.getElementById('resultSmBox').style.backgroundColor = cor.cor;
+        sincronizarBarra();
+        atualizarUltimos();
+        verificarChanceBranco(historico);
+      })
+      .catch(() => {
+        document.getElementById('sugestaoBox').textContent = '⚠️ Erro na API';
+      });
+  }
+
+  function sincronizarBarra() {
+    const b = document.getElementById('progressoInterno');
+    b.style.animation = 'none';
+    void b.offsetWidth;
+    b.style.animation = 'descarregar 15s linear forwards';
+  }
+
+  let tempoAnterior = '';
+  function verificarTempoBlaze() {
+    const tempo = document.querySelector('.time-left span')?.textContent?.trim();
+    if (!tempo || tempo === tempoAnterior) return;
+    tempoAnterior = tempo;
+    const t = document.getElementById('statusRoleta');
+    if (t) t.textContent = `🕒 Girando em: ${tempo}`;
+  }
+
+  // CSS e Menu continuam os mesmos...
+  // (Use o resto do código igual ao seu original, sem mudanças)
+
+  // Insere o menu
+  if (document.getElementById('blazeMenu')) document.getElementById('blazeMenu').remove();
+  const menu = document.createElement('div');
+  menu.id = 'blazeMenu';
+  menu.innerHTML = `
+    <h3>🤖 Double Black - 2k25 <span class="closeBtn">×</span></h3>
+    <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
+    <div id="legendaResultado">Resultado: ...</div>
+    <div id="statusRoleta">🕒 Girando em: ...</div>
+    <div id="barraGiro"><div id="progressoInterno"></div></div>
+    <div id="sugestaoBox">👉 Aguardando...</div>
+    <div id="ultimosResultados"></div>
+    <div class="statusOnline"><span class="dotOnline"></span>Online</div>
+  `;
+  document.body.appendChild(menu);
+
+  // Arrastar e ocultar menu
+  let isDragging = false, offsetX, offsetY;
+  menu.addEventListener('mousedown', e => {
+    isDragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+  document.addEventListener('mouseup', () => isDragging = false);
+  document.addEventListener('mousemove', e => {
+    if (isDragging) {
+      menu.style.left = `${e.clientX - offsetX}px`;
+      menu.style.top = `${e.clientY - offsetY}px`;
+    }
+  });
+  menu.addEventListener('touchstart', e => {
+    isDragging = true;
+    const touch = e.touches[0];
+    offsetX = touch.clientX - menu.getBoundingClientRect().left;
+    offsetY = touch.clientY - menu.getBoundingClientRect().top;
+  });
+  document.addEventListener('touchend', () => isDragging = false);
+  document.addEventListener('touchmove', e => {
+    if (isDragging) {
+      const touch = e.touches[0];
+      menu.style.left = `${touch.clientX - offsetX}px`;
+      menu.style.top = `${touch.clientY - offsetY}px`;
+    }
+  });
+
+  document.querySelector('.closeBtn').addEventListener('click', () => {
+    document.getElementById('blazeMenu').style.display = 'none';
+  });
+
+  document.addEventListener('dblclick', () => {
+    const el = document.getElementById('blazeMenu');
+    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+  });
+
+  atualizarResultado();
+  atualizarUltimos();
+  setInterval(atualizarResultado, 2000);
+  setInterval(verificarTempoBlaze, 1000);
+})();
