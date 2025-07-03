@@ -1,4 +1,4 @@
-// Chefe 2k25 - Script Completo atualizado com barra, branco inteligente e arrastável
+// Chefe 2k25 - Script Final com título verde e status Online reposicionado
 (() => {
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
@@ -188,7 +188,12 @@
       border-radius: 10px; box-shadow: 0 0 20px #ff0000, 0 0 10px #ff0000 inset;
       padding: 10px; z-index: 99999;
     }
-    #blazeMenu h3 { margin: 0 0 6px; color: #ff4444; font-size: 14px; text-align: center; }
+    #blazeMenu h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      text-align: center;
+      color: #00ff00;
+    }
     #resultSmBox { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; margin: 5px auto; border-radius: 6px; }
     #resultNumberCircle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
     #legendaResultado, #statusRoleta { font-size: 12px; text-align: center; margin: 2px 0; color: #ccc; }
@@ -231,7 +236,7 @@
   `;
   document.body.appendChild(menu);
 
-  // Função drag (arrastar o menu)
+  // Drag do menu
   let isDragging = false, offsetX = 0, offsetY = 0;
   const startDrag = (x, y) => { isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop; };
   const drag = (x, y) => { if (!isDragging) return; menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`; };
