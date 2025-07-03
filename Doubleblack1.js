@@ -1,4 +1,4 @@
-// Chefe 2k25 - Script com barra de progresso e sugestão inteligente
+// Chefe 2k25 - Script Completo atualizado com barra, branco inteligente e arrastável
 (() => {
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
@@ -230,6 +230,24 @@
     <div class="statusOnline"><span class="dotOnline"></span>Online</div>
   `;
   document.body.appendChild(menu);
+
+  // Função drag (arrastar o menu)
+  let isDragging = false, offsetX = 0, offsetY = 0;
+  const startDrag = (x, y) => { isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop; };
+  const drag = (x, y) => { if (!isDragging) return; menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`; };
+  menu.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
+  document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', () => isDragging = false);
+  menu.addEventListener('touchstart', e => {
+    const touch = e.touches[0];
+    startDrag(touch.clientX, touch.clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove', e => {
+    const touch = e.touches[0];
+    drag(touch.clientX, touch.clientY);
+  }, { passive: false });
+  document.addEventListener('touchend', () => isDragging = false);
 
   setInterval(atualizarResultado, 2000);
 })();
