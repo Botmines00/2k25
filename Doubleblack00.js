@@ -35,7 +35,7 @@
     tela.id = 'loginTela';
     tela.innerHTML = `
       <div id="loginBox">
-        <h2>🧠 Chefe 2k25 - Login</h2>
+        <h2>🧠 Double Black- Login</h2>
         <input id="user" type="text" placeholder="Usuário" />
         <input id="pass" type="password" placeholder="Senha" />
         <button id="entrarBtn">Entrar</button>
