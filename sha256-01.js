@@ -225,7 +225,7 @@
   const menu = document.createElement('div');
   menu.id = 'blazeMenu';
   menu.innerHTML = `
-    <h3>🤖 Double Black - 2k25</h3>
+    <h3>doubleeclack00</h3>
     <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
     <div id="legendaResultado">Resultado: ...</div>
     <div id="statusRoleta">🕒 Girando em: ...</div>
