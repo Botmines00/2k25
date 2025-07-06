@@ -1,4 +1,4 @@
-// Chefe 2k25 - Script Final com título verde e status Online reposicionado
+// Chefe 2k25 - Script com Instagram slide e fundo escuro no título
 (() => {
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
@@ -180,6 +180,8 @@
   style.textContent = `
     @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
     @keyframes descarregar { from { width: 100%; } to { width: 0%; } }
+    @keyframes slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
     #blazeMenu {
       position: fixed; top: 100px; left: 20px; width: 230px;
       background-image: url('https://i.ibb.co/GvnBzT17/f5bbdfad-b92d-4e69-9081-d2740b5ca5c8.jpg');
@@ -188,11 +190,28 @@
       border-radius: 10px; box-shadow: 0 0 20px #ff0000, 0 0 10px #ff0000 inset;
       padding: 10px; z-index: 99999;
     }
-    #blazeMenu h3 {
-      margin: 0 0 6px;
-      font-size: 14px;
+    .instagramHeader {
+      font-size: 12px;
       text-align: center;
+      font-weight: bold;
+      background-color: #000000cc;
+      padding: 4px 6px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+    .usernameSlider {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+    .usernameSlider span {
+      display: inline-block;
       color: #00ff00;
+      font-weight: bold;
+      font-size: 14px;
+      padding-left: 100%;
+      animation: slide 10s linear infinite;
     }
     #resultSmBox { width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; margin: 5px auto; border-radius: 6px; }
     #resultNumberCircle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
@@ -225,7 +244,8 @@
   const menu = document.createElement('div');
   menu.id = 'blazeMenu';
   menu.innerHTML = `
-    <h3>doubleeclack00</h3>
+    <div class="instagramHeader">📲 Instagram Oficial</div>
+    <div class="usernameSlider"><span>@doubleblack00</span></div>
     <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
     <div id="legendaResultado">Resultado: ...</div>
     <div id="statusRoleta">🕒 Girando em: ...</div>
