@@ -245,7 +245,7 @@
   menu.id = 'blazeMenu';
   menu.innerHTML = `
     <div class="instagramHeader">📲 Instagram Oficial</div>
-    <div class="usernameSlider"><span>@doubleblack00</span></div>
+    <div class="usernameSlider"><span>@doubleeblack00</span></div>
     <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
     <div id="legendaResultado">Resultado: ...</div>
     <div id="statusRoleta">🕒 Girando em: ...</div>
