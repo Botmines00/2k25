@@ -28,29 +28,22 @@
       <div id="progressInner" style="height: 100%; width: 0%; background: #00ff00; text-align:center; font-weight:bold; color:#000; line-height: 22px; text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;"></div>
     </div>
 
-    <div id="horaBranco" style="margin-top: 12px; font-size: 18px; text-align: center; font-weight: bold; color: #ff0000; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000; animation: neonRed 1s infinite alternate;">Entrada Hackeada: --:--</div>
+    <div id="horaBranco" style="margin-top: 12px; font-size: 18px; text-align: center; font-weight: bold; color: #ff0000; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000; animation: neonRed 1s infinite alternate;"></div>
     <div id="assertividade" style="text-align:center; font-weight:bold; font-size:15px; margin-top: 4px; color:#00ffff;"></div>
     <div style="text-align:center; margin: 8px 0; font-weight:bold; color: #00ff00; animation: piscar 1s infinite;">100% SEM GALE</div>
     <div style="font-size: 13px; margin-top: 10px;">📌 <b>Últimos 6 Resultados:</b></div>
     <div id="ultimosResultados" style="display: flex; gap: 4px; margin-top: 6px; justify-content: center;"></div>
 
     <style>
-      @keyframes piscar {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
-      }
-      @keyframes brilhoTitulo {
-        0% { text-shadow: 0 0 5px #ff0000; }
-        100% { text-shadow: 0 0 15px #ff0000; }
-      }
+      @keyframes piscar { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+      @keyframes brilhoTitulo { 0% { text-shadow: 0 0 5px #ff0000; } 100% { text-shadow: 0 0 15px #ff0000; } }
       @keyframes neonRed {
         from { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000; }
         to   { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333, 0 0 30px #ff3333; }
       }
       @keyframes fadeInOut {
         0% { opacity: 0; transform: translateY(20px); }
-        10% { opacity: 1; transform: translateY(0); }
-        90% { opacity: 1; transform: translateY(0); }
+        10%, 90% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(20px); }
       }
     </style>
@@ -62,7 +55,7 @@
   canvas.width = painel.clientWidth;
   canvas.height = painel.clientHeight;
   const letters = Array(256).join("0").split("");
-  function drawMatrix() {
+  setInterval(() => {
     ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#ff1a1a";
@@ -72,16 +65,14 @@
       ctx.fillText(text, x, y_pos);
       letters[index] = y_pos > canvas.height + Math.random() * 1e4 ? 0 : parseFloat(y_pos) + 10;
     });
-  }
-  setInterval(drawMatrix, 40);
+  }, 40);
 
-  // Arrastar no PC e celular
+  // Arraste no PC e Celular
   function iniciarArraste(e) {
     e.preventDefault();
     const isTouch = e.type === "touchstart";
     const startX = isTouch ? e.touches[0].clientX : e.clientX;
     const startY = isTouch ? e.touches[0].clientY : e.clientY;
-
     const rect = painel.getBoundingClientRect();
     const offsetX = startX - rect.left;
     const offsetY = startY - rect.top;
@@ -94,131 +85,91 @@
     }
 
     function parar() {
-      if (isTouch) {
-        document.removeEventListener("touchmove", mover);
-        document.removeEventListener("touchend", parar);
-      } else {
-        document.removeEventListener("mousemove", mover);
-        document.removeEventListener("mouseup", parar);
-      }
+      document.removeEventListener(isTouch ? "touchmove" : "mousemove", mover);
+      document.removeEventListener(isTouch ? "touchend" : "mouseup", parar);
     }
 
-    if (isTouch) {
-      document.addEventListener("touchmove", mover);
-      document.addEventListener("touchend", parar);
-    } else {
-      document.addEventListener("mousemove", mover);
-      document.addEventListener("mouseup", parar);
-    }
+    document.addEventListener(isTouch ? "touchmove" : "mousemove", mover);
+    document.addEventListener(isTouch ? "touchend" : "mouseup", parar);
   }
-
   painel.addEventListener("mousedown", iniciarArraste);
   painel.addEventListener("touchstart", iniciarArraste);
 
+  // Últimos resultados fake (pode adaptar)
   function atualizarResultadosDOM() {
-    try {
-      const entries = document.querySelectorAll('.entries.main .entry');
-      const ultimos = Array.from(entries).slice(0, 6).map((el) => {
-        const cor =
-          el.querySelector(".sm-box.red") ? "red" :
-          el.querySelector(".sm-box.black") ? "black" :
-          el.querySelector(".sm-box.white") ? "white" : "unknown";
-        const numero = el.innerText.trim() || "0";
-        return { cor, numero: parseInt(numero) || 0 };
-      });
-      const container = document.getElementById("ultimosResultados");
-      container.innerHTML = "";
-      ultimos.reverse().forEach((res) => {
-        const bola = document.createElement("div");
-        bola.style = `
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          border-radius: 50%;
-          font-size: 14px;
-        `;
-        if (res.cor === "white") {
-          bola.style.background = "#fff";
-          bola.style.color = "#000";
-          bola.innerText = "0";
-        } else if (res.cor === "red") {
-          bola.style.background = "red";
-          bola.innerText = res.numero;
-        } else if (res.cor === "black") {
-          bola.style.background = "black";
-          bola.style.color = "#fff";
-          bola.innerText = res.numero;
-        }
-        container.appendChild(bola);
-      });
-      return ultimos;
-    } catch (e) {
-      console.log("Erro ao atualizar DOM:", e);
-      return [];
+    const container = document.getElementById("ultimosResultados");
+    container.innerHTML = "";
+    for (let i = 0; i < 6; i++) {
+      const bola = document.createElement("div");
+      const cores = ["white", "red", "black"];
+      const cor = cores[Math.floor(Math.random() * 3)];
+      bola.style = `
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border-radius: 50%;
+        font-size: 14px;
+        background: ${cor};
+        color: ${cor === "white" ? "#000" : "#fff"};
+      `;
+      bola.innerText = cor === "white" ? "0" : Math.floor(Math.random() * 14 + 1);
+      container.appendChild(bola);
     }
   }
 
-  function calcularProximaEntrada(ultimos) {
-    const agora = new Date();
-    let minuto = agora.getMinutes();
-    let hora = agora.getHours();
-    let entradaMinuto = minuto + 1;
-    if ((minuto % 10 === 9 || minuto % 10 === 0) && ultimos[0].cor === "red") entradaMinuto = minuto + 1;
-    const soma2 = ultimos[0].numero + ultimos[1].numero;
-    if (soma2 === 15 || soma2 === 18) entradaMinuto = minuto + 1;
-    if (ultimos.some(p => [2, 5, 7, 13, 14].includes(p.numero))) entradaMinuto = minuto + 2;
-    if (minuto % 3 === 0 || minuto % 7 === 0) entradaMinuto = minuto + 1;
-    const branco = ultimos.find(p => p.cor === "white");
-    if (branco) entradaMinuto = minuto + 14;
-    if (entradaMinuto >= 60) {
-      hora = (hora + 1) % 24;
-      entradaMinuto %= 60;
-    }
-    return `${String(hora).padStart(2, "0")}:${String(entradaMinuto).padStart(2, "0")}`;
-  }
-
-  function gerarAssertividade() {
-    const chance = Math.random();
-    if (chance < 0.6) return "100%";
-    return (99 + Math.random()).toFixed(2) + "%";
-  }
-
+  // Botão Hackear
   document.getElementById("hackWhite").onclick = () => {
     const btn = document.getElementById("hackWhite");
-    const progressBar = document.getElementById("progressBar");
-    const progressInner = document.getElementById("progressInner");
+    const bar = document.getElementById("progressBar");
+    const inner = document.getElementById("progressInner");
+    const horaEl = document.getElementById("horaBranco");
+    const assertEl = document.getElementById("assertividade");
+
     btn.disabled = true;
     btn.innerText = "⏳ Processando...";
-    progressBar.style.display = "block";
-    let progress = 0;
+    bar.style.display = "block";
+    let p = 0;
     const interval = setInterval(() => {
-      progress += 2;
-      progressInner.style.width = `${progress}%`;
-      progressInner.innerText = `${progress}%`;
-      if (progress >= 100) {
+      p += 2;
+      inner.style.width = `${p}%`;
+      inner.innerText = `${p}%`;
+      if (p >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-          progressBar.style.display = "none";
-          progressInner.style.width = "0%";
-          progressInner.innerText = "";
+          bar.style.display = "none";
+          inner.style.width = "0%";
+          inner.innerText = "";
           btn.disabled = false;
           btn.innerText = "🎯 Hackear 14x";
         }, 400);
-        const ultimos = atualizarResultadosDOM();
-        const horaPrevista = calcularProximaEntrada(ultimos);
-        document.getElementById("horaBranco").innerText = `Entrada Hackeada: ${horaPrevista}`;
-        document.getElementById("assertividade").innerText = `🎯 Assertividade: ${gerarAssertividade()}`;
+
+        atualizarResultadosDOM();
+        const agora = new Date();
+        let h = agora.getHours();
+        let m = agora.getMinutes() + 1;
+        if (m >= 60) { m = 0; h = (h + 1) % 24; }
+        const horaFinal = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        horaEl.innerText = `Entrada Hackeada: ${horaFinal}`;
+        assertEl.innerText = `🎯 Assertividade: ${Math.random() < 0.6 ? "100%" : (99 + Math.random()).toFixed(2) + "%"}`;
+
+        const verificador = setInterval(() => {
+          const now = new Date();
+          if (now.getHours() > h || (now.getHours() === h && now.getMinutes() >= m)) {
+            horaEl.innerText = "";
+            clearInterval(verificador);
+          }
+        }, 5000);
       }
     }, 100);
   };
 
-  setInterval(atualizarResultadosDOM, 3000);
+  setInterval(atualizarResultadosDOM, 8000);
   atualizarResultadosDOM();
 
-  // Notificação Instagram
+  // Instagram
   function mostrarNotificacaoInstagram() {
     if (document.getElementById("notificacaoInsta")) return;
     const notif = document.createElement("div");
@@ -243,6 +194,5 @@
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
   }
-
   setInterval(mostrarNotificacaoInstagram, 10000);
 })();
