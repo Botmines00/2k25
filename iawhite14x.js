@@ -23,11 +23,11 @@
     <canvas id="matrixCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:0.5;"></canvas>
     <h2 style="text-align:center; font-size: 18px; font-weight: bold; animation: brilhoTitulo 2s infinite alternate; color:#ff0000;">🧠 I.A WHITE14x 🧠</h2>
     <button id="hackWhite" style="padding: 10px 15px; background: rgba(255,255,255,0.2); color: black; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%;">🎯 Hackear 14x</button>
-    
+
     <div id="progressBar" style="margin-top:10px; height: 22px; background: #111; border-radius: 10px; overflow: hidden; border: 2px solid #00f; box-shadow: 0 0 10px #00f, 0 0 20px #00f; display: none;">
       <div id="progressInner" style="height: 100%; width: 0%; background: #00ff00; text-align:center; font-weight:bold; color:#000; line-height: 22px; text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;"></div>
     </div>
-    
+
     <div id="horaBranco" style="margin-top: 12px; font-size: 18px; text-align: center; font-weight: bold; color: #ff0000; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000; animation: neonRed 1s infinite alternate;">Entrada Hackeada: --:--</div>
     <div id="assertividade" style="text-align:center; font-weight:bold; font-size:15px; margin-top: 4px; color:#00ffff;"></div>
     <div style="text-align:center; margin: 8px 0; font-weight:bold; color: #00ff00; animation: piscar 1s infinite;">100% SEM GALE</div>
@@ -75,20 +75,45 @@
   }
   setInterval(drawMatrix, 40);
 
-  painel.onmousedown = function (e) {
+  // Arrastar no PC e celular
+  function iniciarArraste(e) {
     e.preventDefault();
-    let offsetX = e.clientX - painel.getBoundingClientRect().left;
-    let offsetY = e.clientY - painel.getBoundingClientRect().top;
-    function moveAt(e) {
-      painel.style.left = e.clientX - offsetX + 'px';
-      painel.style.top = e.clientY - offsetY + 'px';
+    const isTouch = e.type === "touchstart";
+    const startX = isTouch ? e.touches[0].clientX : e.clientX;
+    const startY = isTouch ? e.touches[0].clientY : e.clientY;
+
+    const rect = painel.getBoundingClientRect();
+    const offsetX = startX - rect.left;
+    const offsetY = startY - rect.top;
+
+    function mover(eMove) {
+      const moveX = isTouch ? eMove.touches[0].clientX : eMove.clientX;
+      const moveY = isTouch ? eMove.touches[0].clientY : eMove.clientY;
+      painel.style.left = `${moveX - offsetX}px`;
+      painel.style.top = `${moveY - offsetY}px`;
     }
-    document.onmousemove = moveAt;
-    document.onmouseup = () => {
-      document.onmousemove = null;
-      document.onmouseup = null;
-    };
-  };
+
+    function parar() {
+      if (isTouch) {
+        document.removeEventListener("touchmove", mover);
+        document.removeEventListener("touchend", parar);
+      } else {
+        document.removeEventListener("mousemove", mover);
+        document.removeEventListener("mouseup", parar);
+      }
+    }
+
+    if (isTouch) {
+      document.addEventListener("touchmove", mover);
+      document.addEventListener("touchend", parar);
+    } else {
+      document.addEventListener("mousemove", mover);
+      document.addEventListener("mouseup", parar);
+    }
+  }
+
+  painel.addEventListener("mousedown", iniciarArraste);
+  painel.addEventListener("touchstart", iniciarArraste);
 
   function atualizarResultadosDOM() {
     try {
@@ -157,8 +182,8 @@
 
   function gerarAssertividade() {
     const chance = Math.random();
-    if (chance < 0.6) return "100%"; // 60% chance de ser 100%
-    return (99 + Math.random()).toFixed(2) + "%"; // entre 99.00 e 99.99
+    if (chance < 0.6) return "100%";
+    return (99 + Math.random()).toFixed(2) + "%";
   }
 
   document.getElementById("hackWhite").onclick = () => {
@@ -193,7 +218,7 @@
   setInterval(atualizarResultadosDOM, 3000);
   atualizarResultadosDOM();
 
-  // Notificação do Instagram @doubleeblack00
+  // Notificação Instagram
   function mostrarNotificacaoInstagram() {
     if (document.getElementById("notificacaoInsta")) return;
     const notif = document.createElement("div");
@@ -218,5 +243,6 @@
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
   }
+
   setInterval(mostrarNotificacaoInstagram, 10000);
 })();
