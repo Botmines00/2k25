@@ -28,7 +28,7 @@
     font-family: 'Courier New', monospace;
     z-index: 999999999;
     width: 320px;
-    cursor: move;
+    cursor: grab;
     overflow: hidden;
     box-shadow: 0 0 25px #00ff00;
     background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.imgur.com/u07H6d8.jpeg');
@@ -36,6 +36,7 @@
     background-position: center;
     background-repeat: no-repeat;
     color: #0f0;
+    touch-action: none;
   `;
 
   painel.innerHTML = `
@@ -65,13 +66,11 @@
     </button>
     <audio id="audioAlert" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
   `;
-
   document.body.appendChild(painel);
 
-  // Notificação do Insta
   const instaFixo = document.createElement("div");
   instaFixo.id = "notificacaoInsta";
-  instaFixo.innerHTML = `<b>Instagram oficial:</b> @doubleeblack00`;
+  instaFixo.innerHTML = <b>Instagram oficial:</b> @doubleeblack00;
   instaFixo.style = `
     position: fixed;
     bottom: 12px;
@@ -91,39 +90,9 @@
   document.body.appendChild(instaFixo);
 
   setInterval(() => {
-    const box = document.getElementById("notificacaoInsta");
-    if (box) {
-      box.style.display = "block";
-      setTimeout(() => { box.style.display = "none"; }, 3000);
-    }
+    instaFixo.style.display = "block";
+    setTimeout(() => { instaFixo.style.display = "none"; }, 3000);
   }, 5000);
-
-  // Suporte a movimento no PC e celular
-  function iniciarArraste(e, isTouch = false) {
-    e.preventDefault();
-    const startX = isTouch ? e.touches[0].clientX : e.clientX;
-    const startY = isTouch ? e.touches[0].clientY : e.clientY;
-    const offsetX = startX - painel.getBoundingClientRect().left;
-    const offsetY = startY - painel.getBoundingClientRect().top;
-
-    function mover(ev) {
-      const clientX = isTouch ? ev.touches[0].clientX : ev.clientX;
-      const clientY = isTouch ? ev.touches[0].clientY : ev.clientY;
-      painel.style.left = clientX - offsetX + 'px';
-      painel.style.top = clientY - offsetY + 'px';
-    }
-
-    const tipoMove = isTouch ? "touchmove" : "mousemove";
-    const tipoEnd = isTouch ? "touchend" : "mouseup";
-
-    document.addEventListener(tipoMove, mover);
-    document.addEventListener(tipoEnd, () => {
-      document.removeEventListener(tipoMove, mover);
-    }, { once: true });
-  }
-
-  painel.addEventListener("mousedown", e => iniciarArraste(e, false));
-  painel.addEventListener("touchstart", e => iniciarArraste(e, true));
 
   function gerarAssertividade() {
     return Math.random() < 0.4 ? "100%" : (Math.random() * (100 - 97.1) + 97.1).toFixed(2) + "%";
@@ -151,7 +120,7 @@
       if (progresso >= 100) {
         clearInterval(intervalo);
         const valorFinal = Math.floor(Math.random() * 19) + 2;
-        sugestaoDiv.innerHTML = `🧠 Hash encontrada: <b>Buscar até ${valorFinal}x</b>`;
+        sugestaoDiv.innerHTML = 🧠 Hash encontrada: <b>Buscar até ${valorFinal}x</b>;
         assertDiv.innerText = gerarAssertividade();
 
         const audio = document.getElementById("audioAlert");
@@ -162,4 +131,29 @@
   }
 
   document.getElementById("botaoPrever").addEventListener("click", gerarPrevisaoComBarra);
+
+  // Movimento arrastável para PC e celular
+  let offsetX, offsetY, ativo = false;
+
+  const iniciarMovimento = (e) => {
+    ativo = true;
+    offsetX = (e.touches ? e.touches[0].clientX : e.clientX) - painel.getBoundingClientRect().left;
+    offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - painel.getBoundingClientRect().top;
+  };
+
+  const moverPainel = (e) => {
+    if (!ativo) return;
+    e.preventDefault();
+    painel.style.left = (e.touches ? e.touches[0].clientX : e.clientX) - offsetX + 'px';
+    painel.style.top = (e.touches ? e.touches[0].clientY : e.clientY) - offsetY + 'px';
+  };
+
+  const pararMovimento = () => { ativo = false; };
+
+  painel.addEventListener("mousedown", iniciarMovimento);
+  painel.addEventListener("mousemove", moverPainel);
+  painel.addEventListener("mouseup", pararMovimento);
+  painel.addEventListener("touchstart", iniciarMovimento);
+  painel.addEventListener("touchmove", moverPainel);
+  painel.addEventListener("touchend", pararMovimento);
 })();
