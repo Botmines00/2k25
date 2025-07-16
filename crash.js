@@ -70,7 +70,7 @@
 
   const instaFixo = document.createElement("div");
   instaFixo.id = "notificacaoInsta";
-  instaFixo.innerHTML = <b>Instagram oficial:</b> @doubleeblack00;
+  instaFixo.innerHTML = `<b>Instagram oficial:</b> @doubleeblack00`;
   instaFixo.style = `
     position: fixed;
     bottom: 12px;
@@ -120,7 +120,7 @@
       if (progresso >= 100) {
         clearInterval(intervalo);
         const valorFinal = Math.floor(Math.random() * 19) + 2;
-        sugestaoDiv.innerHTML = 🧠 Hash encontrada: <b>Buscar até ${valorFinal}x</b>;
+        sugestaoDiv.innerHTML = `🧠 Hash encontrada: <b>Buscar até ${valorFinal}x</b>`;
         assertDiv.innerText = gerarAssertividade();
 
         const audio = document.getElementById("audioAlert");
