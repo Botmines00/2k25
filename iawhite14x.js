@@ -1,7 +1,6 @@
 (function () {
   if (document.getElementById("painelWhite14x")) return;
 
-  /* ---------- Painel básico ---------- */
   const painel = document.createElement("div");
   painel.id = "painelWhite14x";
   painel.style = `
@@ -19,24 +18,19 @@
     cursor: move;
     overflow: hidden;
   `;
-
   painel.innerHTML = `
     <canvas id="matrixCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:0.5;"></canvas>
     <h2 style="text-align:center;font-size:18px;font-weight:bold;animation:brilhoTitulo 2s infinite alternate;color:#ff0000;">🧠 I.A WHITE14x 🧠</h2>
     <button id="hackWhite" style="padding:10px 15px;background:rgba(255,255,255,0.2);color:black;border:none;font-weight:bold;border-radius:10px;cursor:pointer;width:100%;">🎯 Hackear 14x</button>
-
     <div id="progressBar" style="margin-top:10px;height:22px;background:#111;border-radius:10px;overflow:hidden;border:2px solid #00f;box-shadow:0 0 10px #00f,0 0 20px #00f;display:none;">
       <div id="progressInner" style="height:100%;width:0%;background:#00ff00;text-align:center;font-weight:bold;color:#000;line-height:22px;text-shadow:0 0 5px #00ff00,0 0 10px #00ff00;"></div>
     </div>
-
     <div id="horaBranco" style="margin-top:12px;font-size:18px;text-align:center;font-weight:bold;color:#ff0000;text-shadow:0 0 5px #ff0000,0 0 10px #ff0000,0 0 15px #ff0000;animation:neonRed 1s infinite alternate;">Entrada Hackeada: --:--</div>
     <div id="pessoasEntrando" style="display:none;text-align:center;font-weight:bold;color:#00ffcc;font-size:14px;margin-top:10px;animation:piscar 1.5s infinite;">👥 0 clientes entraram!</div>
     <div id="assertividade" style="display:none;text-align:center;font-weight:bold;font-size:15px;margin-top:4px;color:#00ffff;"></div>
-
     <div style="text-align:center;margin:8px 0;font-weight:bold;color:#00ff00;animation:piscar 1s infinite;">100% SEM GALE</div>
     <div style="font-size:13px;margin-top:10px;">📌 <b>Últimos 6 Resultados:</b></div>
     <div id="ultimosResultados" style="display:flex;gap:4px;margin-top:6px;justify-content:center;"></div>
-
     <style>
       @keyframes piscar {0%,100%{opacity:1;}50%{opacity:.3;}}
       @keyframes brilhoTitulo {0%{text-shadow:0 0 5px #ff0000;}100%{text-shadow:0 0 15px #ff0000;}}
@@ -46,7 +40,6 @@
   `;
   document.body.appendChild(painel);
 
-  /* ---------- Matrix de fundo ---------- */
   const canvas = document.getElementById("matrixCanvas");
   const ctx = canvas.getContext("2d");
   canvas.width = painel.clientWidth;
@@ -64,7 +57,6 @@
     });
   }, 40);
 
-  /* ---------- Arraste touch + mouse ---------- */
   painel.addEventListener("mousedown", startDrag);
   painel.addEventListener("touchstart", startDrag);
   function startDrag(e) {
@@ -79,29 +71,32 @@
       const x = isTouch ? ev.touches[0].clientX : ev.clientX;
       const y = isTouch ? ev.touches[0].clientY : ev.clientY;
       painel.style.left = `${x - offX}px`;
-      painel.style.top  = `${y - offY}px`;
+      painel.style.top = `${y - offY}px`;
     };
     const end = () => {
       document.removeEventListener(isTouch ? "touchmove" : "mousemove", move);
-      document.removeEventListener(isTouch ? "touchend"  : "mouseup",   end);
+      document.removeEventListener(isTouch ? "touchend" : "mouseup", end);
     };
     document.addEventListener(isTouch ? "touchmove" : "mousemove", move);
-    document.addEventListener(isTouch ? "touchend"  : "mouseup",   end);
+    document.addEventListener(isTouch ? "touchend" : "mouseup", end);
   }
 
-  /* ---------- Funções auxiliares ---------- */
   function ultimosResultados() {
-    const entries = document.querySelectorAll(".entries.main .entry");
-    return Array.from(entries).slice(0, 6).map(el => {
+    const caixas = document.querySelectorAll(".sm-box");
+    if (caixas.length < 6) return [];
+    const lista = [];
+    for (let i = 0; i < caixas.length && lista.length < 6; i++) {
+      const box = caixas[i];
       const cor =
-        el.querySelector(".sm-box.red")   ? "red"   :
-        el.querySelector(".sm-box.black") ? "black" :
-        el.querySelector(".sm-box.white") ? "white" :
-        "unk";
-      const num = parseInt(el.innerText.trim()) || 0;
-      return { cor, num };
-    });
+        box.classList.contains("white") ? "white" :
+        box.classList.contains("red")   ? "red"   :
+        box.classList.contains("black") ? "black" : "unk";
+      const num = parseInt(box.innerText.trim()) || 0;
+      lista.push({ cor, num });
+    }
+    return lista;
   }
+
   function renderUltimos() {
     const cont = document.getElementById("ultimosResultados");
     const lista = ultimosResultados();
@@ -116,6 +111,7 @@
     });
     return lista;
   }
+
   setInterval(renderUltimos, 3000);
   renderUltimos();
 
@@ -130,9 +126,9 @@
     if (mm >= 60) { h = (h + 1) % 24; mm %= 60; }
     return `${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;
   }
+
   const pct = () => (Math.random() < .6 ? "100%" : (99 + Math.random()).toFixed(2) + "%");
 
-  /* ---------- Botão Hack ---------- */
   document.getElementById("hackWhite").onclick = () => {
     const btn = document.getElementById("hackWhite");
     const bar = document.getElementById("progressBar");
@@ -145,7 +141,13 @@
       p += 2; inner.style.width = `${p}%`; inner.innerText = `${p}%`;
       if (p >= 100) {
         clearInterval(t);
-        setTimeout(() => { bar.style.display = "none"; inner.style.width = "0%"; inner.innerText = ""; btn.disabled = false; btn.innerText = "🎯 Hackear 14x"; }, 400);
+        setTimeout(() => {
+          bar.style.display = "none";
+          inner.style.width = "0%";
+          inner.innerText = "";
+          btn.disabled = false;
+          btn.innerText = "🎯 Hackear 14x";
+        }, 400);
 
         const ult = renderUltimos();
         if (ult.length >= 2) {
@@ -170,11 +172,11 @@
     }, 100);
   };
 
-  /* ---------- Limpar infos após horário ---------- */
   setInterval(() => {
     const divHora = document.getElementById("horaBranco");
     const alvo = divHora?.getAttribute("data-hora"); if (!alvo) return;
-    const agora = new Date(), cur = `${String(agora.getHours()).padStart(2,"0")}:${String(agora.getMinutes()).padStart(2,"0")}`;
+    const agora = new Date();
+    const cur = `${String(agora.getHours()).padStart(2,"0")}:${String(agora.getMinutes()).padStart(2,"0")}`;
     if (cur === alvo) {
       divHora.style.display = "none";
       document.getElementById("pessoasEntrando").style.display = "none";
@@ -182,7 +184,6 @@
     }
   }, 1000);
 
-  /* ---------- Notificação Insta ---------- */
   setInterval(() => {
     if (document.getElementById("notificacaoInsta")) return;
     const n = document.createElement("div");
