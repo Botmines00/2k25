@@ -68,6 +68,7 @@
 
   document.body.appendChild(painel);
 
+  // Notificação do Insta
   const instaFixo = document.createElement("div");
   instaFixo.id = "notificacaoInsta";
   instaFixo.innerHTML = `<b>Instagram oficial:</b> @doubleeblack00`;
@@ -97,18 +98,32 @@
     }
   }, 5000);
 
-  painel.onmousedown = function (e) {
-    const offsetX = e.clientX - painel.getBoundingClientRect().left;
-    const offsetY = e.clientY - painel.getBoundingClientRect().top;
+  // Suporte a movimento no PC e celular
+  function iniciarArraste(e, isTouch = false) {
+    e.preventDefault();
+    const startX = isTouch ? e.touches[0].clientX : e.clientX;
+    const startY = isTouch ? e.touches[0].clientY : e.clientY;
+    const offsetX = startX - painel.getBoundingClientRect().left;
+    const offsetY = startY - painel.getBoundingClientRect().top;
+
     function mover(ev) {
-      painel.style.left = ev.clientX - offsetX + 'px';
-      painel.style.top = ev.clientY - offsetY + 'px';
+      const clientX = isTouch ? ev.touches[0].clientX : ev.clientX;
+      const clientY = isTouch ? ev.touches[0].clientY : ev.clientY;
+      painel.style.left = clientX - offsetX + 'px';
+      painel.style.top = clientY - offsetY + 'px';
     }
-    document.addEventListener("mousemove", mover);
-    document.addEventListener("mouseup", () => {
-      document.removeEventListener("mousemove", mover);
+
+    const tipoMove = isTouch ? "touchmove" : "mousemove";
+    const tipoEnd = isTouch ? "touchend" : "mouseup";
+
+    document.addEventListener(tipoMove, mover);
+    document.addEventListener(tipoEnd, () => {
+      document.removeEventListener(tipoMove, mover);
     }, { once: true });
-  };
+  }
+
+  painel.addEventListener("mousedown", e => iniciarArraste(e, false));
+  painel.addEventListener("touchstart", e => iniciarArraste(e, true));
 
   function gerarAssertividade() {
     return Math.random() < 0.4 ? "100%" : (Math.random() * (100 - 97.1) + 97.1).toFixed(2) + "%";
