@@ -1,18 +1,4 @@
-[20:01, 16/07/2025] Chefe blaze: javascript:(() => {
-  fetch("https://raw.githubusercontent.com/Botmines00/2k25/refs/heads/main/iawhite14x.js")
-    .then(res => res.text())
-    .then(code => {
-      try {
-        const script = document.createElement("script");
-        script.textContent = code;
-        document.body.appendChild(script);
-      } catch (err) {
-        alert("Erro ao executar o script: " + err);
-      }
-    })
-    .catch(err => alert("Erro ao carregar o script: " + err));
-})();
-[20:04, 16/07/2025] Chefe blaze: (function () {
+(function () {
   if (document.getElementById("painelCrashIA00")) return;
 
   const style = document.createElement("style");
@@ -84,7 +70,7 @@
 
   const instaFixo = document.createElement("div");
   instaFixo.id = "notificacaoInsta";
-  instaFixo.innerHTML = <b>Instagram oficial:</b> @doubleeblack00;
+  instaFixo.innerHTML = `<b>Instagram oficial:</b> @doubleeblack00`;
   instaFixo.style = `
     position: fixed;
     bottom: 12px;
@@ -150,7 +136,7 @@
       if (progresso >= 100) {
         clearInterval(intervalo);
         const valorFinal = Math.floor(Math.random() * 19) + 2;
-        sugestaoDiv.innerHTML = 🧠 Hash encontrada: <b>Buscar até ${valorFinal}x</b>;
+        sugestaoDiv.innerHTML = `🧠 Hash encontrada: <b>Buscar até ${valorFinal}x</b>`;
         assertDiv.innerText = gerarAssertividade();
 
         const audio = document.getElementById("audioAlert");
