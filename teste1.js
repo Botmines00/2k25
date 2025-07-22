@@ -1,163 +1,117 @@
-(function () {
-  if (document.getElementById("painelWhite14x")) return;
-
-  const painel = document.createElement("div");
-  painel.id = "painelWhite14x";
-  painel.style = `
-    position: fixed;
-    top: 100px;
-    left: 20px;
-    background: black;
-    color: white;
-    padding: 15px;
-    border-radius: 15px;
-    font-family: 'Courier New', monospace;
-    z-index: 999999;
-    width: 280px;
-    box-shadow: 0 0 15px #ff0000;
-    cursor: move;
-    overflow: hidden;
-  `;
-
-  painel.innerHTML = `
-    <canvas id="matrixCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:0.45;"></canvas>
-    <h2 style="text-align:center; font-size: 18px; font-weight: bold; animation: brilhoTitulo 2s infinite alternate; color:#ff0000;">🧠 I.A WHITE14x 🧠</h2>
-    <button id="hackWhite" style="padding: 10px 15px; background: rgba(255,255,255,0.2); color: black; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%;">🎯 Hackear 14x</button>
-    <div id="horaBranco" style="margin-top: 12px; font-size: 18px; text-align: center; font-weight: bold; color: #ff0000; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000; animation: neonRed 1s infinite alternate;">Entrada Hackeada: --:--</div>
-    <div id="assertividade" style="text-align:center; font-weight:bold; font-size:15px; margin-top: 4px; color:#00ffff;"></div>
-    <div style="text-align:center; margin: 8px 0; font-weight:bold; color: #00ff00; animation: piscar 1s infinite;">100% SEM GALE</div>
-    <div style="font-size: 13px; margin-top: 10px;">📌 <b>Últimos 6 Resultados:</b></div>
-    <div id="ultimosResultados" style="display: flex; gap: 4px; margin-top: 6px; justify-content: center;"></div>
-
-    <style>
-      @keyframes piscar {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
-      }
-      @keyframes brilhoTitulo {
-        0% { text-shadow: 0 0 5px #ff0000; }
-        100% { text-shadow: 0 0 15px #ff0000; }
-      }
-      @keyframes neonRed {
-        from { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000; }
-        to   { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333, 0 0 30px #ff3333; }
-      }
-    </style>
-  `;
-  document.body.appendChild(painel);
-
-  const canvas = document.getElementById("matrixCanvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = painel.clientWidth;
-  canvas.height = painel.clientHeight;
-  const letters = Array(256).join("0").split("");
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff1a1a";
-    letters.forEach((y_pos, index) => {
-      const text = String.fromCharCode(3e4 + Math.random() * 33);
-      const x = index * 10;
-      ctx.fillText(text, x, y_pos);
-      letters[index] = y_pos > canvas.height + Math.random() * 1e4 ? 0 : parseFloat(y_pos) + 10;
-    });
-  }
-  setInterval(drawMatrix, 50);
-
-  painel.onmousedown = function (e) {
-    e.preventDefault();
-    let offsetX = e.clientX - painel.getBoundingClientRect().left;
-    let offsetY = e.clientY - painel.getBoundingClientRect().top;
-    function moveAt(e) {
-      painel.style.left = e.clientX - offsetX + 'px';
-      painel.style.top = e.clientY - offsetY + 'px';
-    }
-    document.onmousemove = moveAt;
-    document.onmouseup = () => {
-      document.onmousemove = null;
-      document.onmouseup = null;
+javascript:(async function() {
+    const apiUrls = {
+        current: 'https://blaze1.space/api/singleplayer-originals/originals/roulette_games/current/1',
+        recent: 'https://blaze1.space/api/singleplayer-originals/originals/roulette_games/recent/1',
+        history: 'https://blaze.com/api/roulette_games/history_analytics?n=3000'
     };
-  };
 
-  function atualizarResultadosDOM() {
-    try {
-      const entries = document.querySelectorAll('.entries.main .entry');
-      const ultimos = Array.from(entries).slice(0, 6).map((el) => {
-        const cor =
-          el.querySelector(".sm-box.red") ? "red" :
-          el.querySelector(".sm-box.black") ? "black" :
-          el.querySelector(".sm-box.white") ? "white" : "unknown";
-        const numero = el.innerText.trim() || "0";
-        return { cor, numero: parseInt(numero) || 0 };
-      });
-      const container = document.getElementById("ultimosResultados");
-      container.innerHTML = "";
-      ultimos.reverse().forEach((res) => {
-        const bola = document.createElement("div");
-        bola.style = `
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          border-radius: 50%;
-          font-size: 14px;
+    const menu = createMenu();
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css';
+    document.head.appendChild(link);
+    document.body.appendChild(menu);
+    document.addEventListener('dblclick', (e) => toggleMenu(menu, e.clientY, e.clientX));
+
+    function createMenu() {
+        const m = document.createElement('div');
+        Object.assign(m.style, {
+            position: 'fixed',
+            width: '290px',
+            background: '#1e1e1e',
+            color: '#fff',
+            padding: '10px',
+            borderRadius: '8px',
+            border: '2px solid #00FF00',
+            boxShadow: '0 0 10px rgba(0,0,0,0.5)',
+            display: 'none',
+            zIndex: '9999'
+        });
+
+        m.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <img src="https://i.ibb.co/y0LXzcQ/IMG-20241017-WA0216.jpg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #00FF00; margin-right: 10px;">
+                <div style="flex-grow: 1; text-align: center;">
+                    <h3 style='margin: 0; font-size: 18px; color: white;'>NEW SYSTEM 00</h3>
+                    <div style='font-size: 12px; color: #00FF00; margin-top: 3px; display: flex; align-items: center; justify-content: center;'>
+                        <i class="fab fa-instagram" style="margin-right: 5px; color: #00FF00;"></i>
+                        bot00blaze
+                    </div>
+                    <div id="hackingMessage" style="font-size: 14px; color: #00FF00; margin-top: 10px;">Bem-vindo ao New System 00</div>
+                </div>
+                <span id='closeMenu' style="cursor: pointer; font-size: 14px; color: white;">❌</span>
+            </div>
+            <div id="messageArea" style="margin-top: 10px; padding: 5px; background-color: #333; border-radius: 5px;">
+                <p id="messageText" style="margin: 0; font-size: 14px;">Nenhuma mensagem no momento</p>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <span class="chance" style="color: #00FF00; font-weight: bold;">Chance: 99.99%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    Entrar no: <span class="colorIndicator">🔴</span>
+                </div>
+                <div id="winMessage" style="color: #00FF00; font-weight: bold; display: none;"></div>
+                <div style="margin-top: 10px; font-size: 12px; color: #00FF00;">
+                    <div style="background-color: rgba(255, 255, 255, 0.1); padding: 3px 5px; border-radius: 5px; display: inline-block;">
+                        SHA256 | Versão: 4.0
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <div style="height: 100px; width: 100%; background-color: #333; border-radius: 10px; position: relative;">
+                    <div id="redBar" style="position: absolute; bottom: 0; width: 33%; height: 0; background-color: red; border-radius: 10px;"></div>
+                    <div id="whiteBar" style="position: absolute; bottom: 0; width: 33%; height: 0; background-color: white; border-radius: 10px;"></div>
+                    <div id="blackBar" style="position: absolute; bottom: 0; width: 33%; height: 0; background-color: black; border-radius: 10px;"></div>
+                </div>
+            </div>
         `;
-        if (res.cor === "white") {
-          bola.style.background = "#fff";
-          bola.style.color = "#000";
-          bola.innerText = "0";
-        } else if (res.cor === "red") {
-          bola.style.background = "red";
-          bola.innerText = res.numero;
-        } else if (res.cor === "black") {
-          bola.style.background = "black";
-          bola.style.color = "#fff";
-          bola.innerText = res.numero;
+        return m;
+    }
+
+    function toggleMenu(menu, y, x) {
+        menu.style.top = `${y}px`;
+        menu.style.left = `${x}px`;
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.getElementById('closeMenu').addEventListener('click', () => menu.style.display = 'none');
+
+    function showMessage(message) {
+        const messageText = document.getElementById('messageText');
+        messageText.textContent = message;
+    }
+
+    function processResult(colorSymbol) {
+        let redHeight = 0, whiteHeight = 0, blackHeight = 0;
+        if (colorSymbol === 0) whiteHeight = 100;
+        else if (colorSymbol >= 1 && colorSymbol <= 7) redHeight = 100;
+        else if (colorSymbol >= 8 && colorSymbol <= 14) blackHeight = 100;
+
+        document.getElementById('redBar').style.height = `${redHeight}%`;
+        document.getElementById('whiteBar').style.height = `${whiteHeight}%`;
+        document.getElementById('blackBar').style.height = `${blackHeight}%`;
+        document.querySelector(".colorIndicator").innerText = colorSymbol === 0 ? '⚪️' : colorSymbol <= 7 ? '🔴' : '⚫️';
+    }
+
+    async function fetchColorPrediction() {
+        try {
+            const response = await fetch(apiUrls.current);
+            const data = await response.json();
+            return data.color; // A API retorna um valor de cor (0, 1 ou 2) para processar
+        } catch (error) {
+            console.error("Erro ao buscar dados da API:", error);
+            return Math.floor(Math.random() * 15); // Gera cor aleatória caso API falhe
         }
-        container.appendChild(bola);
-      });
-      return ultimos;
-    } catch (e) {
-      console.log("Erro ao atualizar DOM:", e);
-      return [];
     }
-  }
 
-  function calcularProximaEntrada(ultimos) {
-    const agora = new Date();
-    let minuto = agora.getMinutes();
-    let hora = agora.getHours();
-    let entradaMinuto = minuto + 1;
-    if ((minuto % 10 === 9 || minuto % 10 === 0) && ultimos[0].cor === "red") entradaMinuto = minuto + 1;
-    const soma2 = ultimos[0].numero + ultimos[1].numero;
-    if (soma2 === 15 || soma2 === 18) entradaMinuto = minuto + 1;
-    if (ultimos.some(p => [2, 5, 7, 13, 14].includes(p.numero))) entradaMinuto = minuto + 2;
-    if (minuto % 3 === 0 || minuto % 7 === 0) entradaMinuto = minuto + 1;
-    const branco = ultimos.find(p => p.cor === "white");
-    if (branco) entradaMinuto = minuto + 14;
-    if (entradaMinuto >= 60) {
-      hora = (hora + 1) % 24;
-      entradaMinuto %= 60;
+    function initPredictionLoop() {
+        setInterval(async () => {
+            const colorPrediction = await fetchColorPrediction();
+            processResult(colorPrediction);
+        }, 13000);
     }
-    return `${String(hora).padStart(2, "0")}:${String(entradaMinuto).padStart(2, "0")}`;
-  }
 
-  function gerarAssertividade() {
-    const sorte = Math.random();
-    if (sorte < 0.5) return "100%";
-    if (sorte < 0.8) return "99.7%";
-    return (98 + Math.random() * 2).toFixed(1) + "%";
-  }
-
-  document.getElementById("hackWhite").onclick = () => {
-    const ultimos = atualizarResultadosDOM();
-    const horaPrevista = calcularProximaEntrada(ultimos);
-    document.getElementById("horaBranco").innerText = `Entrada Hackeada: ${horaPrevista}`;
-    document.getElementById("assertividade").innerText = `🎯 Assertividade: ${gerarAssertividade()}`;
-  };
-
-  setInterval(atualizarResultadosDOM, 3000);
-  atualizarResultadosDOM();
+    initPredictionLoop();
+    showMessage('Bem-vindo ao New System 00!');
 })();
