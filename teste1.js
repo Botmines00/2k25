@@ -1,170 +1,122 @@
-(() => {
-  const coresMap = {
-    0: { nome: '⚪ Branco', cor: 'white', texto: 'black' },
-    1: { nome: '🔴 Vermelho', cor: '#ff3c59', texto: 'white' },
-    2: { nome: '⚫ Preto', cor: '#1d2027', texto: 'white' },
-  };
+(function () {
+  if (document.getElementById("doubleblack00")) return;
 
-  const getCorPorNumero = (num) => {
-    if (num === 0) return coresMap[0];
-    if (num >= 1 && num <= 7) return coresMap[1];
-    return coresMap[2];
-  };
-
-  let ultimoId = null;
-  let sugestaoCor = null;
-
-  function criarTile(numero) {
-    const corData = getCorPorNumero(numero);
-    const tile = document.createElement('div');
-    tile.style = `
-      width: 26px; height: 26px; border-radius: 5px;
-      background-color: ${corData.cor}; color: ${corData.texto};
-      font-size: 12px; font-weight: bold;
-      display: flex; justify-content: center; align-items: center;
-      margin: 0 2px;
-    `;
-    tile.textContent = numero;
-    return tile;
-  }
-
-  function criarConfetti() {
-    const wrapper = document.createElement('div');
-    wrapper.id = 'confettiWrapper';
-    wrapper.style = `
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none; z-index: 999998;
-    `;
-    for (let i = 0; i < 50; i++) {
-      const el = document.createElement('div');
-      el.textContent = '💸';
-      el.style = `
-        position: absolute;
-        top: ${Math.random() * 100}%;
-        left: ${Math.random() * 100}%;
-        font-size: ${12 + Math.random() * 16}px;
-        animation: fall 2.5s linear forwards;
-      `;
-      wrapper.appendChild(el);
-    }
-    document.body.appendChild(wrapper);
-    setTimeout(() => wrapper.remove(), 3000);
-  }
-
-  function mostrarResultadoFinal(tipo) {
-    const box = document.createElement('div');
-    box.id = 'resultadoFinalBox';
-    box.textContent = tipo === 'win' ? '✅ WIN' : '❌ LOSS';
-    box.style = `
-      position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
-      background: ${tipo === 'win' ? '#28a745' : '#dc3545'};
-      color: white; padding: 6px 12px; font-weight: bold;
-      border-radius: 6px; font-family: sans-serif; z-index: 999999;
-      box-shadow: 0 0 10px ${tipo === 'win' ? '#28a745' : '#dc3545'};
-    `;
-    document.body.appendChild(box);
-    if (tipo === 'win') criarConfetti();
-    setTimeout(() => box.remove(), 2500);
-  }
-
-  function atualizarUltimos(lista) {
-    const box = document.getElementById('ultimosResultados');
-    if (!box || !lista) return;
-    box.innerHTML = '';
-    lista.slice(0, 6).forEach(num => box.appendChild(criarTile(num)));
-  }
-
-  async function atualizarResultado() {
-    try {
-      const res = await fetch("https://blaze.bet.br/api/roulette_games/recent");
-      const data = await res.json();
-      if (!data || data.length === 0) return;
-
-      const entradaAtual = data[0];
-      if (entradaAtual.id === ultimoId) return;
-      ultimoId = entradaAtual.id;
-
-      const cor = getCorPorNumero(entradaAtual.roll);
-      atualizarUltimos(data.map(d => d.roll));
-
-      document.getElementById('corPrevista').textContent = cor.nome;
-      document.getElementById('corPrevista').style.background = cor.cor;
-      document.getElementById('corPrevista').style.color = cor.texto;
-
-      // Lógica da sugestão
-      const sugestaoBox = document.getElementById('sugestaoBox');
-      if (entradaAtual.roll >= 1 && entradaAtual.roll <= 7) {
-        sugestaoBox.textContent = '👉 Apostar no Preto';
-        sugestaoBox.style.background = '#1d2027';
-        sugestaoCor = '#1d2027';
-      } else if (entradaAtual.roll >= 8) {
-        sugestaoBox.textContent = '👉 Apostar no Vermelho';
-        sugestaoBox.style.background = '#ff3c59';
-        sugestaoCor = '#ff3c59';
-      } else {
-        sugestaoBox.textContent = '👉 Forçar Branco';
-        sugestaoBox.style.background = 'white';
-        sugestaoBox.style.color = 'black';
-        sugestaoCor = 'white';
-      }
-
-      // Validar WIN/LOSS
-      if (sugestaoCor !== null) {
-        if (cor.cor === sugestaoCor) {
-          mostrarResultadoFinal('win');
-        } else {
-          mostrarResultadoFinal('loss');
-        }
-      }
-
-    } catch (e) {
-      console.error("Erro na API:", e);
-    }
-  }
-
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
-    #menuDB { position: fixed; top: 100px; left: 20px; background: #111; color: white; font-family: sans-serif; border-radius: 10px; box-shadow: 0 0 20px #00ff00; padding: 12px; z-index: 99999; width: 240px; }
-    #menuDB h2 { margin: 0 0 5px; font-size: 16px; text-align: center; }
-    #corPrevista { padding: 5px; font-weight: bold; border-radius: 4px; text-align: center; margin: 5px 0; }
-    #sugestaoBox { padding: 6px; border-radius: 4px; font-weight: bold; margin-top: 5px; text-align: center; background: #333; }
-    #ultimosResultados { display: flex; justify-content: center; margin-top: 5px; gap: 3px; }
-    #instagramNome { color: #00ff00; text-align: center; font-size: 13px; margin-bottom: 4px; }
+  const painel = document.createElement("div");
+  painel.id = "doubleblack00";
+  painel.style = `
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    background: black;
+    color: white;
+    padding: 15px;
+    border-radius: 15px;
+    font-family: 'Courier New', monospace;
+    z-index: 999999;
+    width: 280px;
+    box-shadow: 0 0 15px #00ff00;
+    cursor: move;
+    overflow: hidden;
   `;
-  document.head.appendChild(style);
 
-  if (document.getElementById('menuDB')) document.getElementById('menuDB').remove();
-
-  const menu = document.createElement('div');
-  menu.id = 'menuDB';
-  menu.innerHTML = `
-    <div id="instagramNome">@doubleeblack00</div>
-    <h2>Double Black</h2>
-    <div id="corPrevista">...</div>
-    <div id="sugestaoBox">Carregando...</div>
-    <div id="ultimosResultados"></div>
+  painel.innerHTML = `
+    <div style="text-align:center; font-size:14px; color:#00ff00;">@doubleeblack00</div>
+    <h2 style="text-align:center; font-size:18px;">Double Black</h2>
+    <div id="status" style="text-align:center; font-size:14px; margin:6px 0;">...</div>
+    <div style="text-align:center; font-size:16px; font-weight:bold;" id="corPrevista">Carregando...</div>
+    <div id="ultimosResultados" style="margin-top:8px; display:flex; justify-content:center; gap:4px;"></div>
   `;
-  document.body.appendChild(menu);
 
-  // Tornar arrastável
-  let isDragging = false, offsetX = 0, offsetY = 0;
-  const startDrag = (x, y) => { isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop; };
-  const drag = (x, y) => { if (!isDragging) return; menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`; };
-  menu.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
-  document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
+  document.body.appendChild(painel);
+
+  // Função para movimentar o painel (PC e celular)
+  let offsetX, offsetY, isDragging = false;
+
+  painel.addEventListener('mousedown', e => {
+    isDragging = true;
+    offsetX = e.clientX - painel.offsetLeft;
+    offsetY = e.clientY - painel.offsetTop;
+  });
+  document.addEventListener('mousemove', e => {
+    if (isDragging) {
+      painel.style.left = `${e.clientX - offsetX}px`;
+      painel.style.top = `${e.clientY - offsetY}px`;
+    }
+  });
   document.addEventListener('mouseup', () => isDragging = false);
-  menu.addEventListener('touchstart', e => {
-    const touch = e.touches[0];
-    startDrag(touch.clientX, touch.clientY);
-    e.preventDefault();
+
+  painel.addEventListener('touchstart', e => {
+    isDragging = true;
+    offsetX = e.touches[0].clientX - painel.offsetLeft;
+    offsetY = e.touches[0].clientY - painel.offsetTop;
   }, { passive: false });
   document.addEventListener('touchmove', e => {
-    const touch = e.touches[0];
-    drag(touch.clientX, touch.clientY);
+    if (isDragging) {
+      painel.style.left = `${e.touches[0].clientX - offsetX}px`;
+      painel.style.top = `${e.touches[0].clientY - offsetY}px`;
+    }
   }, { passive: false });
   document.addEventListener('touchend', () => isDragging = false);
 
-  setInterval(atualizarResultado, 2000);
+  // Lógica da previsão (Chefe 2k25)
+  function getCorPorNumero(numero) {
+    if (numero === 0) return { nome: 'Branco', cor: 'white' };
+    if (numero >= 1 && numero <= 7) return { nome: 'Vermelho', cor: '#ff3c59' };
+    return { nome: 'Preto', cor: '#1d2027' };
+  }
+
+  let ultimoId = null;
+
+  function atualizarPrevisao() {
+    fetch("https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1")
+      .then(res => res.json())
+      .then(data => {
+        const ultimo = data[0];
+        if (!ultimo || ultimo.id === ultimoId) return;
+        ultimoId = ultimo.id;
+
+        const cor = getCorPorNumero(ultimo.roll);
+        const span = document.getElementById("corPrevista");
+        const ultimos = document.getElementById("ultimosResultados");
+
+        // Atualiza últimos 6 resultados
+        if (ultimos) {
+          ultimos.innerHTML = "";
+          data.slice(0, 6).reverse().forEach(d => {
+            const c = getCorPorNumero(d.roll);
+            const e = document.createElement("div");
+            e.textContent = d.roll;
+            e.style = `
+              background: ${c.cor};
+              width: 20px; height: 20px;
+              border-radius: 4px;
+              color: black;
+              text-align: center;
+              font-size: 12px;
+              font-weight: bold;
+            `;
+            ultimos.appendChild(e);
+          });
+        }
+
+        // Sugestão
+        if (ultimo.roll === 0) {
+          span.textContent = '⬜';
+          span.style.color = 'white';
+        } else if (ultimo.roll >= 1 && ultimo.roll <= 7) {
+          span.textContent = '⚫️';
+          span.style.color = '#1d2027';
+        } else {
+          span.textContent = '🔴';
+          span.style.color = '#ff3c59';
+        }
+      })
+      .catch(err => {
+        const span = document.getElementById("corPrevista");
+        span.textContent = "Erro";
+        span.style.color = "orange";
+      });
+  }
+
+  setInterval(atualizarPrevisao, 2000);
 })();
