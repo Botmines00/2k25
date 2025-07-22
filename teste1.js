@@ -1,5 +1,5 @@
 (async function () {
-  if (document.getElementById("doubleBlackMenu")) return; // prevenir múltiplas execuções
+  if (document.getElementById("doubleBlackMenu")) return;
 
   const apiURL = 'https://blaze.bet.br/api/roulette_games/recent';
   let ultimoID = null;
@@ -98,34 +98,36 @@
       container.innerHTML = '';
 
       ultimos.forEach(result => {
-        const cor = result.color === 0 ? '#ffffff' : result.color <= 7 ? '#ff0000' : '#000000';
+        const colorCode =
+          result.roll === 0 ? '#ffffff' :
+          result.roll <= 7 ? '#ff0000' :
+          '#000000';
+
+        const textColor = result.roll === 0 ? '#000' : '#fff';
+
         const box = document.createElement('div');
-        box.style.width = '25px';
-        box.style.height = '25px';
-        box.style.borderRadius = '4px';
-        box.style.backgroundColor = cor;
-        box.style.border = '1px solid #888';
+        box.style.width = '30px';
+        box.style.height = '30px';
+        box.style.borderRadius = '6px';
+        box.style.display = 'flex';
+        box.style.alignItems = 'center';
+        box.style.justifyContent = 'center';
+        box.style.backgroundColor = colorCode;
+        box.style.color = textColor;
+        box.style.fontWeight = 'bold';
+        box.style.fontSize = '14px';
+        box.textContent = result.roll;
         container.appendChild(box);
       });
 
-      const corAtual = ultimos[0].color;
-      document.getElementById('corPrevista').innerText = corAtual === 0 ? '⚪️' : corAtual <= 7 ? '🔴' : '⚫️';
+      const corAtual = ultimos[0].roll;
+      document.getElementById('corPrevista').innerText =
+        corAtual === 0 ? '⚪️' : corAtual <= 7 ? '🔴' : '⚫️';
     } catch (erro) {
       console.error("Erro ao obter resultados:", erro);
     }
   }
 
-  // Aguarda o DOM carregar 100%
-  document.addEventListener("DOMContentLoaded", () => {
-    const menu = criarMenu();
-    document.body.appendChild(menu);
-    tornarArrastavel(menu);
-    document.getElementById('closeMenu').onclick = () => menu.remove();
-    atualizarResultados();
-    setInterval(atualizarResultados, 6000);
-  });
-
-  // Se já carregado (testar direto em console), executa direto
   if (document.readyState !== "loading") {
     const menu = criarMenu();
     document.body.appendChild(menu);
@@ -133,5 +135,14 @@
     document.getElementById('closeMenu').onclick = () => menu.remove();
     await atualizarResultados();
     setInterval(atualizarResultados, 6000);
+  } else {
+    document.addEventListener("DOMContentLoaded", async () => {
+      const menu = criarMenu();
+      document.body.appendChild(menu);
+      tornarArrastavel(menu);
+      document.getElementById('closeMenu').onclick = () => menu.remove();
+      await atualizarResultados();
+      setInterval(atualizarResultados, 6000);
+    });
   }
 })();
