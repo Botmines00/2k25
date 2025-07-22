@@ -1,5 +1,4 @@
 (async function () {
-  // Força remover menu antigo se tiver
   const antigo = document.getElementById("doubleBlackMenu");
   if (antigo) antigo.remove();
 
@@ -40,7 +39,7 @@
 
     <div id="messageArea" style="margin-top: 10px; padding: 5px; background-color: #333; border-radius: 5px;">
         <p style="margin: 0; font-size: 14px;">Chance: <span style="color:#00FF00;font-weight:bold;">99.99%</span></p>
-        <p style="margin: 0; font-size: 14px;">Entrar no: <span id="corPrevista">🔴</span></p>
+        <p style="margin: 0; font-size: 14px;">Entrar no: <span id="corPrevista">⏳</span></p>
     </div>
 
     <div style="margin-top: 10px; font-size: 12px; color: #00FF00;">
@@ -54,10 +53,9 @@
 
   document.body.appendChild(menu);
 
-  // Botão fechar
   document.getElementById('closeMenu').onclick = () => menu.remove();
 
-  // Tornar arrastável
+  // Arrastar
   let isDragging = false, offsetX, offsetY;
   menu.addEventListener('mousedown', startDrag);
   menu.addEventListener('touchstart', startDrag);
@@ -85,6 +83,7 @@
     isDragging = false;
   }
 
+  // Atualiza resultados reais da Blaze
   async function atualizarResultados() {
     try {
       const res = await fetch(apiURL);
@@ -99,33 +98,30 @@
       container.innerHTML = '';
 
       ultimos.forEach(result => {
-        const colorCode =
-          result.roll === 0 ? '#ffffff' :
-          result.roll <= 7 ? '#ff0000' :
-          '#000000';
-
-        const textColor = result.roll === 0 ? '#000' : '#fff';
-
-        const box = document.createElement('div');
-        box.style.width = '30px';
-        box.style.height = '30px';
-        box.style.borderRadius = '6px';
-        box.style.display = 'flex';
-        box.style.alignItems = 'center';
-        box.style.justifyContent = 'center';
-        box.style.backgroundColor = colorCode;
-        box.style.color = textColor;
-        box.style.fontWeight = 'bold';
-        box.style.fontSize = '14px';
-        box.textContent = result.roll;
-        container.appendChild(box);
+        const cor = result.color === 0 ? '#fff' : result.color === 1 ? '#f00' : '#000';
+        const texto = result.color === 0 ? '#000' : '#fff';
+        const div = document.createElement('div');
+        div.style.width = '30px';
+        div.style.height = '30px';
+        div.style.borderRadius = '6px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.justifyContent = 'center';
+        div.style.backgroundColor = cor;
+        div.style.color = texto;
+        div.style.fontWeight = 'bold';
+        div.style.fontSize = '14px';
+        div.textContent = result.number;
+        container.appendChild(div);
       });
 
-      const corAtual = ultimos[0].roll;
-      document.getElementById('corPrevista').innerText =
-        corAtual === 0 ? '⚪️' : corAtual <= 7 ? '🔴' : '⚫️';
+      // Atualiza sugestão com base na cor do último resultado
+      const corAtual = dados[0].color;
+      const icone = corAtual === 0 ? '⚪️' : corAtual === 1 ? '🔴' : '⚫️';
+      document.getElementById('corPrevista').innerText = icone;
+
     } catch (erro) {
-      console.error("Erro ao obter resultados:", erro);
+      console.error("Erro ao buscar resultados:", erro);
     }
   }
 
