@@ -24,7 +24,7 @@
             <h3 style='margin: 0; font-size: 18px; color: white;'>Double Black</h3>
             <div style='font-size: 12px; color: #00FF00; margin-top: 3px; display: flex; align-items: center; justify-content: center;'>
                 <i class="fab fa-instagram" style="margin-right: 5px; color: #00FF00;"></i>
-                bot00blaze
+                doubleeblack00
             </div>
             <div style="font-size: 14px; color: #00FF00; margin-top: 10px;">Bem-vindo ao Double Black</div>
         </div>
@@ -78,13 +78,19 @@
     isDragging = false;
   }
 
-  // Buscar dados reais da Blaze
+  // Buscar dados reais da Blaze (com controle para não repetir chamadas)
+  let ultimoID = null;
   async function atualizarResultados() {
     try {
       const res = await fetch(apiURL);
       const dados = await res.json();
+      if (!dados || dados.length === 0) return;
 
-      const ultimos = dados.slice(0, 6); // Últimos 6 resultados
+      // Só atualiza se o último ID mudar
+      if (dados[0].id === ultimoID) return;
+      ultimoID = dados[0].id;
+
+      const ultimos = dados.slice(0, 6);
       const container = document.getElementById('ultimosResultados');
       container.innerHTML = '';
 
@@ -99,7 +105,6 @@
         container.appendChild(box);
       });
 
-      // Definir a cor sugerida com base no último
       const corAtual = ultimos[0].color;
       document.getElementById('corPrevista').innerText = corAtual === 0 ? '⚪️' : corAtual <= 7 ? '🔴' : '⚫️';
     } catch (erro) {
@@ -107,6 +112,7 @@
     }
   }
 
-  setInterval(atualizarResultados, 5000);
-  atualizarResultados();
+  // Rodar uma vez ao iniciar e a cada 6 segundos
+  await atualizarResultados();
+  setInterval(atualizarResultados, 6000);
 })();
