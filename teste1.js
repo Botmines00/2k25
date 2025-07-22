@@ -31,7 +31,7 @@
   `;
 
   painel.innerHTML = `
-    <img src="https://i.imgur.com/GaB6N3m.png" style="width: 80px; height: 80px; margin-bottom: 10px; border-radius: 10px;" />
+    <img src="https://i.imgur.com/NjvNOAf.png" style="width: 80px; height: 80px; margin-bottom: 10px; border-radius: 10px;" />
     <div style="color:#00ff00; font-size: 14px;">@doubleeblack00</div>
     <h2 style="margin: 10px 0; font-size: 20px;">Double Black</h2>
     <div style="margin: 10px 0;">
@@ -50,15 +50,6 @@
     return '❓';
   }
 
-  async function getResultados() {
-    try {
-      const res = await fetch('https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1');
-      return await res.json();
-    } catch {
-      return [];
-    }
-  }
-
   function prever(cor) {
     if (cor === 'white') return '🔴';
     if (cor === 'red') return '⚫️';
@@ -67,26 +58,33 @@
   }
 
   async function atualizar() {
-    const resultados = await getResultados();
-    if (!resultados || resultados.length === 0) return;
-    const ultima = resultados[0];
-    const sugestao = prever(ultima.color);
-    document.getElementById("corSugestao").innerText = sugestao;
+    try {
+      const res = await fetch('https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1');
+      const resultados = await res.json();
 
-    const ultimos = document.getElementById("ultimos");
-    ultimos.innerHTML = '';
-    resultados.slice(0, 6).reverse().forEach(res => {
-      const box = document.createElement("div");
-      box.textContent = getEmoji(res.color);
-      box.style = `
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 18px;
-        background: ${res.color === 'red' ? '#ff0000' : res.color === 'black' ? '#333' : '#fff'};
-        color: ${res.color === 'white' ? '#000' : '#fff'};
-      `;
-      ultimos.appendChild(box);
-    });
+      if (!Array.isArray(resultados) || resultados.length === 0) return;
+
+      const sugestao = prever(resultados[0].color);
+      document.getElementById("corSugestao").innerText = sugestao;
+
+      const ultimos = document.getElementById("ultimos");
+      ultimos.innerHTML = '';
+      resultados.slice(0, 6).reverse().forEach(res => {
+        const box = document.createElement("div");
+        box.textContent = getEmoji(res.color);
+        box.style = `
+          padding: 6px 10px;
+          border-radius: 6px;
+          font-size: 18px;
+          background: ${res.color === 'red' ? '#ff0000' : res.color === 'black' ? '#333' : '#fff'};
+          color: ${res.color === 'white' ? '#000' : '#fff'};
+        `;
+        ultimos.appendChild(box);
+      });
+
+    } catch (err) {
+      console.error('Erro ao atualizar resultados:', err);
+    }
   }
 
   atualizar();
