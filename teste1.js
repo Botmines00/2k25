@@ -1,130 +1,170 @@
-(async function () {
-  const antigo = document.getElementById("doubleBlackMenu");
-  if (antigo) antigo.remove();
+(() => {
+  const coresMap = {
+    0: { nome: '⚪ Branco', cor: 'white', texto: 'black' },
+    1: { nome: '🔴 Vermelho', cor: '#ff3c59', texto: 'white' },
+    2: { nome: '⚫ Preto', cor: '#1d2027', texto: 'white' },
+  };
 
-  const apiURL = 'https://blaze.bet.br/api/roulette_games/recent';
-  let ultimoID = null;
+  const getCorPorNumero = (num) => {
+    if (num === 0) return coresMap[0];
+    if (num >= 1 && num <= 7) return coresMap[1];
+    return coresMap[2];
+  };
 
-  const menu = document.createElement('div');
-  menu.id = 'doubleBlackMenu';
-  Object.assign(menu.style, {
-    position: 'fixed',
-    top: '100px',
-    left: '20px',
-    width: '290px',
-    background: '#1e1e1e',
-    color: '#fff',
-    padding: '10px',
-    borderRadius: '8px',
-    border: '2px solid #00FF00',
-    boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-    zIndex: '9999',
-    cursor: 'move',
-    display: 'block'
-  });
+  let ultimoId = null;
+  let sugestaoCor = null;
 
-  menu.innerHTML = `
-    <div style="display: flex; align-items: center;">
-        <img src="https://i.ibb.co/y0LXzcQ/IMG-20241017-WA0216.jpg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #00FF00; margin-right: 10px;">
-        <div style="flex-grow: 1; text-align: center;">
-            <h3 style='margin: 0; font-size: 18px; color: white;'>Double Black</h3>
-            <div style='font-size: 12px; color: #00FF00; margin-top: 3px; display: flex; align-items: center; justify-content: center;'>
-                <i class="fab fa-instagram" style="margin-right: 5px; color: #00FF00;"></i>
-                doubleeblack00
-            </div>
-            <div style="font-size: 14px; color: #00FF00; margin-top: 10px;">Bem-vindo ao Double Black</div>
-        </div>
-        <span id='closeMenu' style="cursor: pointer; font-size: 14px; color: white;">❌</span>
-    </div>
-
-    <div id="messageArea" style="margin-top: 10px; padding: 5px; background-color: #333; border-radius: 5px;">
-        <p style="margin: 0; font-size: 14px;">Chance: <span style="color:#00FF00;font-weight:bold;">99.99%</span></p>
-        <p style="margin: 0; font-size: 14px;">Entrar no: <span id="corPrevista">⏳</span></p>
-    </div>
-
-    <div style="margin-top: 10px; font-size: 12px; color: #00FF00;">
-      <div style="background-color: rgba(255, 255, 255, 0.1); padding: 3px 5px; border-radius: 5px; display: inline-block;">
-          SHA256 | Versão: 4.0
-      </div>
-    </div>
-
-    <div id="ultimosResultados" style="margin-top: 15px; display: flex; gap: 5px; justify-content: center;"></div>
-  `;
-
-  document.body.appendChild(menu);
-
-  document.getElementById('closeMenu').onclick = () => menu.remove();
-
-  // Arrastar
-  let isDragging = false, offsetX, offsetY;
-  menu.addEventListener('mousedown', startDrag);
-  menu.addEventListener('touchstart', startDrag);
-  document.addEventListener('mousemove', drag);
-  document.addEventListener('mouseup', stopDrag);
-  document.addEventListener('touchmove', drag);
-  document.addEventListener('touchend', stopDrag);
-
-  function startDrag(e) {
-    isDragging = true;
-    const rect = menu.getBoundingClientRect();
-    offsetX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  function criarTile(numero) {
+    const corData = getCorPorNumero(numero);
+    const tile = document.createElement('div');
+    tile.style = `
+      width: 26px; height: 26px; border-radius: 5px;
+      background-color: ${corData.cor}; color: ${corData.texto};
+      font-size: 12px; font-weight: bold;
+      display: flex; justify-content: center; align-items: center;
+      margin: 0 2px;
+    `;
+    tile.textContent = numero;
+    return tile;
   }
 
-  function drag(e) {
-    if (!isDragging) return;
-    const x = (e.touches ? e.touches[0].clientX : e.clientX) - offsetX;
-    const y = (e.touches ? e.touches[0].clientY : e.clientY) - offsetY;
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
+  function criarConfetti() {
+    const wrapper = document.createElement('div');
+    wrapper.id = 'confettiWrapper';
+    wrapper.style = `
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none; z-index: 999998;
+    `;
+    for (let i = 0; i < 50; i++) {
+      const el = document.createElement('div');
+      el.textContent = '💸';
+      el.style = `
+        position: absolute;
+        top: ${Math.random() * 100}%;
+        left: ${Math.random() * 100}%;
+        font-size: ${12 + Math.random() * 16}px;
+        animation: fall 2.5s linear forwards;
+      `;
+      wrapper.appendChild(el);
+    }
+    document.body.appendChild(wrapper);
+    setTimeout(() => wrapper.remove(), 3000);
   }
 
-  function stopDrag() {
-    isDragging = false;
+  function mostrarResultadoFinal(tipo) {
+    const box = document.createElement('div');
+    box.id = 'resultadoFinalBox';
+    box.textContent = tipo === 'win' ? '✅ WIN' : '❌ LOSS';
+    box.style = `
+      position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+      background: ${tipo === 'win' ? '#28a745' : '#dc3545'};
+      color: white; padding: 6px 12px; font-weight: bold;
+      border-radius: 6px; font-family: sans-serif; z-index: 999999;
+      box-shadow: 0 0 10px ${tipo === 'win' ? '#28a745' : '#dc3545'};
+    `;
+    document.body.appendChild(box);
+    if (tipo === 'win') criarConfetti();
+    setTimeout(() => box.remove(), 2500);
   }
 
-  // Atualiza resultados reais da Blaze
-  async function atualizarResultados() {
+  function atualizarUltimos(lista) {
+    const box = document.getElementById('ultimosResultados');
+    if (!box || !lista) return;
+    box.innerHTML = '';
+    lista.slice(0, 6).forEach(num => box.appendChild(criarTile(num)));
+  }
+
+  async function atualizarResultado() {
     try {
-      const res = await fetch(apiURL);
-      const dados = await res.json();
-      if (!dados || dados.length === 0) return;
+      const res = await fetch("https://blaze.bet.br/api/roulette_games/recent");
+      const data = await res.json();
+      if (!data || data.length === 0) return;
 
-      if (dados[0].id === ultimoID) return;
-      ultimoID = dados[0].id;
+      const entradaAtual = data[0];
+      if (entradaAtual.id === ultimoId) return;
+      ultimoId = entradaAtual.id;
 
-      const ultimos = dados.slice(0, 6);
-      const container = document.getElementById('ultimosResultados');
-      container.innerHTML = '';
+      const cor = getCorPorNumero(entradaAtual.roll);
+      atualizarUltimos(data.map(d => d.roll));
 
-      ultimos.forEach(result => {
-        const cor = result.color === 0 ? '#fff' : result.color === 1 ? '#f00' : '#000';
-        const texto = result.color === 0 ? '#000' : '#fff';
-        const div = document.createElement('div');
-        div.style.width = '30px';
-        div.style.height = '30px';
-        div.style.borderRadius = '6px';
-        div.style.display = 'flex';
-        div.style.alignItems = 'center';
-        div.style.justifyContent = 'center';
-        div.style.backgroundColor = cor;
-        div.style.color = texto;
-        div.style.fontWeight = 'bold';
-        div.style.fontSize = '14px';
-        div.textContent = result.number;
-        container.appendChild(div);
-      });
+      document.getElementById('corPrevista').textContent = cor.nome;
+      document.getElementById('corPrevista').style.background = cor.cor;
+      document.getElementById('corPrevista').style.color = cor.texto;
 
-      // Atualiza sugestão com base na cor do último resultado
-      const corAtual = dados[0].color;
-      const icone = corAtual === 0 ? '⚪️' : corAtual === 1 ? '🔴' : '⚫️';
-      document.getElementById('corPrevista').innerText = icone;
+      // Lógica da sugestão
+      const sugestaoBox = document.getElementById('sugestaoBox');
+      if (entradaAtual.roll >= 1 && entradaAtual.roll <= 7) {
+        sugestaoBox.textContent = '👉 Apostar no Preto';
+        sugestaoBox.style.background = '#1d2027';
+        sugestaoCor = '#1d2027';
+      } else if (entradaAtual.roll >= 8) {
+        sugestaoBox.textContent = '👉 Apostar no Vermelho';
+        sugestaoBox.style.background = '#ff3c59';
+        sugestaoCor = '#ff3c59';
+      } else {
+        sugestaoBox.textContent = '👉 Forçar Branco';
+        sugestaoBox.style.background = 'white';
+        sugestaoBox.style.color = 'black';
+        sugestaoCor = 'white';
+      }
 
-    } catch (erro) {
-      console.error("Erro ao buscar resultados:", erro);
+      // Validar WIN/LOSS
+      if (sugestaoCor !== null) {
+        if (cor.cor === sugestaoCor) {
+          mostrarResultadoFinal('win');
+        } else {
+          mostrarResultadoFinal('loss');
+        }
+      }
+
+    } catch (e) {
+      console.error("Erro na API:", e);
     }
   }
 
-  await atualizarResultados();
-  setInterval(atualizarResultados, 6000);
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
+    #menuDB { position: fixed; top: 100px; left: 20px; background: #111; color: white; font-family: sans-serif; border-radius: 10px; box-shadow: 0 0 20px #00ff00; padding: 12px; z-index: 99999; width: 240px; }
+    #menuDB h2 { margin: 0 0 5px; font-size: 16px; text-align: center; }
+    #corPrevista { padding: 5px; font-weight: bold; border-radius: 4px; text-align: center; margin: 5px 0; }
+    #sugestaoBox { padding: 6px; border-radius: 4px; font-weight: bold; margin-top: 5px; text-align: center; background: #333; }
+    #ultimosResultados { display: flex; justify-content: center; margin-top: 5px; gap: 3px; }
+    #instagramNome { color: #00ff00; text-align: center; font-size: 13px; margin-bottom: 4px; }
+  `;
+  document.head.appendChild(style);
+
+  if (document.getElementById('menuDB')) document.getElementById('menuDB').remove();
+
+  const menu = document.createElement('div');
+  menu.id = 'menuDB';
+  menu.innerHTML = `
+    <div id="instagramNome">@doubleeblack00</div>
+    <h2>Double Black</h2>
+    <div id="corPrevista">...</div>
+    <div id="sugestaoBox">Carregando...</div>
+    <div id="ultimosResultados"></div>
+  `;
+  document.body.appendChild(menu);
+
+  // Tornar arrastável
+  let isDragging = false, offsetX = 0, offsetY = 0;
+  const startDrag = (x, y) => { isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop; };
+  const drag = (x, y) => { if (!isDragging) return; menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`; };
+  menu.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
+  document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', () => isDragging = false);
+  menu.addEventListener('touchstart', e => {
+    const touch = e.touches[0];
+    startDrag(touch.clientX, touch.clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove', e => {
+    const touch = e.touches[0];
+    drag(touch.clientX, touch.clientY);
+  }, { passive: false });
+  document.addEventListener('touchend', () => isDragging = false);
+
+  setInterval(atualizarResultado, 2000);
 })();
