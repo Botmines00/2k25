@@ -25,12 +25,12 @@
     const tile = document.createElement('div');
     tile.className = 'tile-wrapper';
     tile.style.cssText = `
-      width: 28px; height: 28px; border-radius: 6px;
+      width: 28px; height: 28px; border-radius: 6px; /* Mais arredondado */
       background-color: ${corData.cor}; display: flex;
       justify-content: center; align-items: center;
       font-size: 14px; font-weight: bold;
-      color: ${corData.texto}; margin: 0 3px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      color: ${corData.texto}; margin: 0 4px; /* Mais espaçamento */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra sutil */
     `;
     tile.textContent = numero;
     return tile;
@@ -185,88 +185,91 @@
       @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
       @keyframes descarregar { from { width: 100%; } to { width: 0%; } }
       @keyframes slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-      /* A keyframe 'gradient-animation' foi removida temporariamente para depuração */
 
       #blazeMenu {
-        position: fixed; top: 100px; left: 20px; width: 230px;
-        background-color: #1a1a1a; /* Fundo sólido para teste */
+        position: fixed; top: 100px; left: 50%; transform: translateX(-50%); /* Centralizado */
+        width: 250px; /* Um pouco mais largo */
+        background-color: rgba(29, 32, 39, 0.95); /* Fundo cinza escuro com leve transparência */
         color: white;
-        font-family: sans-serif; /* Simplificado para teste */
-        border-radius: 10px; /* Revertido para o que funcionava antes */
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Sombra mais simples */
-        padding: 15px; /* Mantendo o padding aumentado */
+        font-family: 'Inter', 'Roboto', sans-serif; /* Mantendo fontes profissionais */
+        border-radius: 12px; /* Mais arredondado */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7); /* Sombra mais suave e profunda */
+        padding: 20px; /* Mais padding geral */
         z-index: 99999;
         box-sizing: border-box;
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
       }
       .instagramHeader {
-        font-size: 13px; text-align: center; font-weight: 600;
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 6px 10px; border-radius: 6px; margin-bottom: 12px;
+        font-size: 14px; /* Um pouco maior */
+        text-align: center; font-weight: 600;
+        background-color: rgba(0, 0, 0, 0.6); /* Mais transparente */
+        padding: 8px 12px; border-radius: 8px; margin-bottom: 15px; /* Mais padding e margem */
       }
       .usernameSlider {
         width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box;
       }
       .usernameSlider span {
         display: inline-block; color: #00ff00; font-weight: bold;
-        font-size: 15px;
+        font-size: 16px; /* Fonte maior */
         padding-left: 100%; animation: slide 10s linear infinite;
       }
       #resultSmBox {
-        width: 70px; height: 70px;
+        width: 80px; height: 80px; /* Ainda maior para destaque máximo */
         display: flex; justify-content: center; align-items: center;
-        margin: 15px auto;
+        margin: 20px auto; /* Mais margem */
         border-radius: 50%;
-        box-shadow: 0 0 20px rgba(255, 60, 89, 0.8);
+        box-shadow: 0 0 25px rgba(255, 60, 89, 0.9); /* Sombra mais intensa */
       }
       #resultNumberCircle {
-        width: 60px; height: 60px;
+        width: 70px; height: 70px; /* Maior */
         border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-weight: 800; font-size: 30px;
+        font-weight: 900; font-size: 36px; /* Fonte bem maior e super negrita */
         color: white;
       }
       #legendaResultado, #statusRoleta {
-        font-size: 14px; text-align: center; margin: 6px 0;
-        color: #ddd;
+        font-size: 15px; text-align: center; margin: 8px 0; /* Mais margem */
+        color: #e0e0e0; /* Cor mais clara para legibilidade */
       }
       #barraGiro {
-        width: 100%; height: 10px;
-        background: #333; border-radius: 5px; overflow: hidden;
-        margin: 15px 0;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        width: 100%; height: 12px; /* Mais alta */
+        background: #3a3a3a; /* Fundo mais escuro para contraste */
+        border-radius: 6px; overflow: hidden;
+        margin: 20px 0; /* Mais margem */
+        box-shadow: inset 0 1px 4px rgba(0,0,0,0.6); /* Sombra interna mais forte */
       }
       #progressoInterno {
         width: 100%; height: 100%;
-        background-color: #ff3c59; /* Fundo sólido para teste */
-        animation: descarregar 13.5s linear forwards; /* Apenas uma animação */
-        /* A animação 'gradient-animation' foi removida temporariamente para depuração */
+        background-color: #ff3c59; /* Cor sólida, mais segura */
+        animation: descarregar 13.5s linear forwards;
       }
       #sugestaoBox {
-        text-align: center; font-size: 16px; padding: 10px;
-        margin: 15px 0;
-        border-radius: 8px; font-weight: bold; color: white;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+        text-align: center; font-size: 18px; padding: 12px; /* Mais padding, estilo de botão */
+        margin: 20px 0; /* Mais margem */
+        border-radius: 10px; font-weight: bold; color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         cursor: pointer;
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transição para sombra também */
       }
       #sugestaoBox:active {
         transform: scale(0.98);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
       }
       #ultimosResultados {
-        display: flex; justify-content: center; margin: 15px 0 0;
-        padding-top: 10px;
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex; justify-content: center; margin: 20px 0 0; /* Mais margem */
+        padding-top: 15px; /* Espaçamento interno */
+        border-top: 1px solid rgba(255, 255, 255, 0.2); /* Separador mais visível */
       }
       .statusOnline {
-        text-align: center; font-size: 12px; margin-top: 12px;
+        text-align: center; font-size: 13px; margin-top: 15px; /* Mais margem */
         color: #00ff00; font-weight: bold;
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 4px 8px; border-radius: 6px; display: inline-block;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 5px 10px; border-radius: 8px; display: inline-block; /* Mais padding e arredondamento */
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
       }
       .dotOnline {
-        width: 9px; height: 9px; background-color: #00ff00;
+        width: 10px; height: 10px; background-color: #00ff00; /* Maior */
         border-radius: 50%; display: inline-block;
-        margin-right: 6px; animation: pulse 1.5s infinite;
+        margin-right: 8px; animation: pulse 1.5s infinite;
       }
       @keyframes pulse {
         0% { transform: scale(1); opacity: 0.8; }
