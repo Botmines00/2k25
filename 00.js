@@ -1,8 +1,6 @@
-// Chefe 2k25 - Script com Instagram slide e fundo escuro no título
 (() => {
   'use strict';
 
-  // Mapeamento de cores
   const coresMap = {
     0: { nome: '⬜ Branco', cor: 'white', texto: 'black' },
     1: { nome: '🟥 Vermelho', cor: '#ff3c59', texto: 'white' },
@@ -14,23 +12,19 @@
     return num >= 1 && num <= 7 ? coresMap[1] : coresMap[2];
   };
 
-  const state = {
-    ultimoId: null,
-    sugestaoCor: null,
-  };
+  const state = { ultimoId: null, sugestaoCor: null };
 
-  // Funções de criação de elementos
   const criarTile = (numero) => {
     const corData = getCorPorNumero(numero);
     const tile = document.createElement('div');
     tile.className = 'tile-wrapper';
     tile.style.cssText = `
-      width: 28px; height: 28px; border-radius: 6px; /* Mais arredondado */
+      width: 28px; height: 28px; border-radius: 6px;
       background-color: ${corData.cor}; display: flex;
       justify-content: center; align-items: center;
       font-size: 14px; font-weight: bold;
-      color: ${corData.texto}; margin: 0 4px; /* Mais espaçamento */
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra sutil */
+      color: ${corData.texto}; margin: 0 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     `;
     tile.textContent = numero;
     return tile;
@@ -92,27 +86,11 @@
     return entradas;
   };
 
-  const sincronizarBarra = () => {
-    const tempoElemento = document.querySelector('.time-left span');
-    const tempoTexto = tempoElemento?.textContent || '13.5s';
-    const segundos = parseFloat(tempoTexto.replace(/[^0-9,.]/g, '').replace(',', '.')) || 13.5;
-
-    const barra = document.getElementById('progressoInterno');
-    if (!barra) return;
-    barra.style.animation = 'none';
-    void barra.offsetWidth; // Recria a animação
-    barra.style.animation = `descarregar ${segundos}s linear forwards`;
-
-    const status = document.getElementById('statusRoleta');
-    if (status) status.textContent = `🕒 Girando em: ${segundos.toFixed(1)}s`;
-  };
-
   const atualizarResultado = async () => {
     try {
       const response = await fetch("https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1");
       const data = await response.json();
       const d = data[0];
-
       if (!d || d.id === state.ultimoId) return;
 
       const cor = getCorPorNumero(d.roll);
@@ -122,16 +100,13 @@
       }
 
       state.ultimoId = d.id;
-      
+
       const resultNumberCircle = document.getElementById('resultNumberCircle');
       if (resultNumberCircle) {
-          resultNumberCircle.textContent = d.roll;
-          resultNumberCircle.style.background = cor.cor;
-          resultNumberCircle.style.color = cor.texto;
+        resultNumberCircle.textContent = d.roll;
+        resultNumberCircle.style.background = cor.cor;
+        resultNumberCircle.style.color = cor.texto;
       }
-
-      const legendaResultado = document.getElementById('legendaResultado');
-      if (legendaResultado) legendaResultado.textContent = `Resultado: ${cor.nome}`;
 
       const resultSmBox = document.getElementById('resultSmBox');
       if (resultSmBox) resultSmBox.style.backgroundColor = cor.cor;
@@ -172,102 +147,73 @@
       }
 
       atualizarUltimos();
-      sincronizarBarra();
     } catch (error) {
       console.error("Erro ao buscar dados da roleta:", error);
     }
   };
 
-  // Injeção de CSS e HTML
   const setupUI = () => {
     const style = document.createElement('style');
     style.textContent = `
       @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
-      @keyframes descarregar { from { width: 100%; } to { width: 0%; } }
       @keyframes slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
       #blazeMenu {
-        position: fixed; top: 100px; left: 50%; transform: translateX(-50%); /* Centralizado */
-        width: 250px; /* Um pouco mais largo */
-        background-color: rgba(29, 32, 39, 0.95); /* Fundo cinza escuro com leve transparência */
-        color: white;
-        font-family: 'Inter', 'Roboto', sans-serif; /* Mantendo fontes profissionais */
-        border-radius: 12px; /* Mais arredondado */
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7); /* Sombra mais suave e profunda */
-        padding: 20px; /* Mais padding geral */
-        z-index: 99999;
-        box-sizing: border-box;
-        border: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
+        position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
+        width: 250px; background-color: rgba(29, 32, 39, 0.95);
+        color: white; font-family: 'Inter', sans-serif;
+        border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+        padding: 20px; z-index: 99999; box-sizing: border-box;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
       .instagramHeader {
-        font-size: 14px; /* Um pouco maior */
-        text-align: center; font-weight: 600;
-        background-color: rgba(0, 0, 0, 0.6); /* Mais transparente */
-        padding: 8px 12px; border-radius: 8px; margin-bottom: 15px; /* Mais padding e margem */
+        font-size: 14px; text-align: center; font-weight: 600;
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 8px 12px; border-radius: 8px; margin-bottom: 15px;
       }
       .usernameSlider {
         width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box;
       }
       .usernameSlider span {
         display: inline-block; color: #00ff00; font-weight: bold;
-        font-size: 16px; /* Fonte maior */
-        padding-left: 100%; animation: slide 10s linear infinite;
+        font-size: 16px; padding-left: 100%;
+        animation: slide 10s linear infinite;
       }
       #resultSmBox {
-        width: 80px; height: 80px; /* Ainda maior para destaque máximo */
-        display: flex; justify-content: center; align-items: center;
-        margin: 20px auto; /* Mais margem */
-        border-radius: 50%;
-        box-shadow: 0 0 25px rgba(255, 60, 89, 0.9); /* Sombra mais intensa */
+        width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+        margin: 20px auto; border-radius: 50%;
+        box-shadow: 0 0 25px rgba(255, 60, 89, 0.9);
       }
       #resultNumberCircle {
-        width: 70px; height: 70px; /* Maior */
-        border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-weight: 900; font-size: 36px; /* Fonte bem maior e super negrita */
-        color: white;
-      }
-      #legendaResultado, #statusRoleta {
-        font-size: 15px; text-align: center; margin: 8px 0; /* Mais margem */
-        color: #e0e0e0; /* Cor mais clara para legibilidade */
-      }
-      #barraGiro {
-        width: 100%; height: 12px; /* Mais alta */
-        background: #3a3a3a; /* Fundo mais escuro para contraste */
-        border-radius: 6px; overflow: hidden;
-        margin: 20px 0; /* Mais margem */
-        box-shadow: inset 0 1px 4px rgba(0,0,0,0.6); /* Sombra interna mais forte */
-      }
-      #progressoInterno {
-        width: 100%; height: 100%;
-        background-color: #ff3c59; /* Cor sólida, mais segura */
-        animation: descarregar 13.5s linear forwards;
+        width: 70px; height: 70px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 36px; color: white;
       }
       #sugestaoBox {
-        text-align: center; font-size: 18px; padding: 12px; /* Mais padding, estilo de botão */
-        margin: 20px 0; /* Mais margem */
-        border-radius: 10px; font-weight: bold; color: white;
+        text-align: center; font-size: 18px; padding: 12px;
+        margin: 20px 0; border-radius: 10px; font-weight: bold; color: white;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transição para sombra também */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
       #sugestaoBox:active {
         transform: scale(0.98);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
       }
       #ultimosResultados {
-        display: flex; justify-content: center; margin: 20px 0 0; /* Mais margem */
-        padding-top: 15px; /* Espaçamento interno */
-        border-top: 1px solid rgba(255, 255, 255, 0.2); /* Separador mais visível */
+        display: flex; justify-content: center; margin: 20px 0 0;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
       }
       .statusOnline {
-        text-align: center; font-size: 13px; margin-top: 15px; /* Mais margem */
+        text-align: center; font-size: 13px; margin-top: 15px;
         color: #00ff00; font-weight: bold;
         background-color: rgba(0, 0, 0, 0.6);
-        padding: 5px 10px; border-radius: 8px; display: inline-block; /* Mais padding e arredondamento */
+        padding: 5px 10px; border-radius: 8px; display: inline-block;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
       }
       .dotOnline {
-        width: 10px; height: 10px; background-color: #00ff00; /* Maior */
+        width: 10px; height: 10px; background-color: #00ff00;
         border-radius: 50%; display: inline-block;
         margin-right: 8px; animation: pulse 1.5s infinite;
       }
@@ -279,46 +225,30 @@
     `;
     document.head.appendChild(style);
 
-    const menuExistente = document.getElementById('blazeMenu');
-    if (menuExistente) menuExistente.remove();
-
     const menu = document.createElement('div');
     menu.id = 'blazeMenu';
     menu.innerHTML = `
-      <div class="instagramHeader">📲 Instagram Oficial</div>
+      <div class="instagramHeader">📲 I.a Double 00</div>
       <div class="usernameSlider"><span>@i.adouble00</span></div>
       <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
-      <div id="legendaResultado">Resultado: ...</div>
-      <div id="statusRoleta">🕒 Girando em: ...</div>
-      <div id="barraGiro"><div id="progressoInterno"></div></div>
       <div id="sugestaoBox">👉 Aguardando...</div>
       <div id="ultimosResultados"></div>
       <div class="statusOnline"><span class="dotOnline"></span>Online</div>
     `;
     document.body.appendChild(menu);
 
-    // Lógica para arrastar o menu
+    // Drag
     let isDragging = false, offsetX = 0, offsetY = 0;
     const startDrag = (x, y) => { isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop; };
     const drag = (x, y) => { if (!isDragging) return; menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`; };
-    
     menu.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
     document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
     document.addEventListener('mouseup', () => isDragging = false);
-
-    menu.addEventListener('touchstart', e => {
-      const touch = e.touches[0];
-      startDrag(touch.clientX, touch.clientY);
-      e.preventDefault();
-    }, { passive: false });
-    document.addEventListener('touchmove', e => {
-      const touch = e.touches[0];
-      drag(touch.clientX, touch.clientY);
-    }, { passive: false });
+    menu.addEventListener('touchstart', e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
+    document.addEventListener('touchmove', e => { const t = e.touches[0]; drag(t.clientX, t.clientY); }, { passive: false });
     document.addEventListener('touchend', () => isDragging = false);
   };
 
-  // Inicialização
   setupUI();
   setInterval(atualizarResultado, 2000);
 })();
