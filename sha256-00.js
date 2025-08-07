@@ -1,5 +1,5 @@
 (() => {
-  const usersUrl = 'https://raw.githubusercontent.com/Botmines00/2k25/refs/heads/main/users.json';
+  const usersUrl = 'https://raw.githubusercontent.com/Botmines00/2k25/main/users.json';
   const scriptUrl = 'https://raw.githubusercontent.com/Botmines00/2k25/refs/heads/main/sha256-01.js';
 
   function criarTelaLogin() {
