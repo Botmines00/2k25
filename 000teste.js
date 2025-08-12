@@ -192,10 +192,7 @@
         background: rgba(255,255,255,0.12);
         color: #fff; display: flex; align-items: center; justify-content: center;
         font-size: 14px; cursor: pointer; user-select: none;
-        transition: transform .15s ease, background .15s ease;
       }
-      #blazeMenu .closeBtn:hover { transform: scale(1.06); background: rgba(255,255,255,0.2); }
-
       .instagramHeader {
         font-size: 13px; text-align: center; font-weight: 600;
         background-color: rgba(0, 0, 0, 0.6);
@@ -224,11 +221,6 @@
         margin: 16px 0; border-radius: 10px; font-weight: bold; color: white;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-      #sugestaoBox:active {
-        transform: scale(0.98);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
       }
       #ultimosResultados {
         display: flex; justify-content: center; margin: 16px 0 0;
@@ -240,17 +232,11 @@
         color: #00ff00; font-weight: bold;
         background-color: rgba(0, 0, 0, 0.6);
         padding: 5px 10px; border-radius: 8px; display: inline-block;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
       }
       .dotOnline {
         width: 9px; height: 9px; background-color: #00ff00;
         border-radius: 50%; display: inline-block;
         margin-right: 8px; animation: pulse 1.5s infinite;
-      }
-      @keyframes pulse {
-        0% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.6); opacity: 0.4; }
-        100% { transform: scale(1); opacity: 0.8; }
       }
     `;
     document.head.appendChild(style);
@@ -268,22 +254,24 @@
     `;
     document.body.appendChild(menu);
 
-    // Fechar pelo X
-    const closeBtn = document.getElementById('blazeCloseBtn');
-    closeBtn.addEventListener('click', () => { menu.style.display = 'none'; });
+    // Função toggle menu
+    const toggleMenu = () => {
+      menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+    };
 
-    // Mostrar com duplo clique (desktop)
-    document.addEventListener('dblclick', () => {
-      if (menu.style.display === 'none') menu.style.display = 'block';
+    // Fechar pelo X
+    document.getElementById('blazeCloseBtn').addEventListener('click', () => {
+      menu.style.display = 'none';
     });
 
-    // Mostrar com duplo toque (mobile)
+    // Duplo clique desktop
+    document.addEventListener('dblclick', toggleMenu);
+
+    // Duplo toque mobile
     let lastTap = 0;
     document.addEventListener('touchend', () => {
       const now = Date.now();
-      if (now - lastTap < 300) { // 2 toques em < 300ms
-        if (menu.style.display === 'none') menu.style.display = 'block';
-      }
+      if (now - lastTap < 300) toggleMenu();
       lastTap = now;
     });
 
@@ -298,11 +286,9 @@
       if (!isDragging) return; 
       menu.style.left = `${x - offsetX}px`; 
       menu.style.top = `${y - offsetY}px`; 
-      // fixa a posição absoluta para não depender do transform do centro
       menu.style.transform = 'translateX(0)';
     };
 
-    // Começa centralizado; ao arrastar, removemos o translateX
     menu.style.left = '50%';
     menu.style.transform = 'translateX(-50%)';
 
