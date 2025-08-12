@@ -192,15 +192,14 @@
         background: rgba(255,255,255,0.12);
         color: #fff; display: flex; align-items: center; justify-content: center;
         font-size: 14px; cursor: pointer; user-select: none;
+        z-index: 1;
       }
       .instagramHeader {
         font-size: 13px; text-align: center; font-weight: 600;
         background-color: rgba(0, 0, 0, 0.6);
         padding: 6px 10px; border-radius: 8px; margin-bottom: 12px;
       }
-      .usernameSlider {
-        width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box;
-      }
+      .usernameSlider { width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
       .usernameSlider span {
         display: inline-block; color: #00ff00; font-weight: bold;
         font-size: 15px; padding-left: 100%;
@@ -224,8 +223,7 @@
       }
       #ultimosResultados {
         display: flex; justify-content: center; margin: 16px 0 0;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.2);
       }
       .statusOnline {
         text-align: center; font-size: 12px; margin-top: 12px;
@@ -254,58 +252,91 @@
     `;
     document.body.appendChild(menu);
 
-    // Função toggle menu
-    const toggleMenu = () => {
-      menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
-    };
+    // helpers de visibilidade
+    const isHidden = () => window.getComputedStyle(menu).display === 'none';
+    const showMenu = () => { menu.style.display = 'block'; };
+    const hideMenu = () => { menu.style.display = 'none'; };
+    const toggleMenu = () => { isHidden() ? showMenu() : hideMenu(); };
 
-    // Fechar pelo X
-    document.getElementById('blazeCloseBtn').addEventListener('click', () => {
-      menu.style.display = 'none';
+    // X fecha (desktop e mobile) e não deixa o evento "sujar" o duplo toque
+    const closeBtn = document.getElementById('blazeCloseBtn');
+    const closeHandler = (e) => { e.preventDefault(); e.stopPropagation(); hideMenu(); };
+    closeBtn.addEventListener('click', closeHandler, { passive: false });
+    closeBtn.addEventListener('touchend', closeHandler, { passive: false });
+
+    // Duplo clique desktop: toggle
+    document.addEventListener('dblclick', (e) => {
+      // se clicar duas vezes no X, já fechou na primeira — evita reabrir
+      if (e.target.closest('#blazeCloseBtn')) return;
+      toggleMenu();
     });
 
-    // Duplo clique desktop
-    document.addEventListener('dblclick', toggleMenu);
+    // Duplo toque mobile robusto (ignora arrasto)
+    let tapCount = 0, tapTimer = null, startX = 0, startY = 0, moved = false;
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 1) return;
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY; moved = false;
+    }, { passive: true });
 
-    // Duplo toque mobile
-    let lastTap = 0;
-    document.addEventListener('touchend', () => {
-      const now = Date.now();
-      if (now - lastTap < 300) toggleMenu();
-      lastTap = now;
-    });
+    document.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+      if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) > 12) moved = true;
+    }, { passive: true });
 
-    // Drag
+    document.addEventListener('touchend', (e) => {
+      // toque no X não conta para duplo-toque global
+      if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
+      if (moved) return;
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => {
+        if (tapCount >= 2) toggleMenu();
+        tapCount = 0;
+      }, 250);
+    }, { passive: true });
+
+    // Drag — não inicia arrasto quando o alvo é o botão X
     let isDragging = false, offsetX = 0, offsetY = 0;
-    const startDrag = (x, y) => { 
-      isDragging = true; 
-      offsetX = x - menu.offsetLeft; 
-      offsetY = y - menu.offsetTop; 
+    const startDrag = (evt, x, y) => {
+      if (evt.target && evt.target.closest && evt.target.closest('#blazeCloseBtn')) return;
+      isDragging = true;
+      offsetX = x - menu.offsetLeft;
+      offsetY = y - menu.offsetTop;
     };
-    const drag = (x, y) => { 
-      if (!isDragging) return; 
-      menu.style.left = `${x - offsetX}px`; 
-      menu.style.top = `${y - offsetY}px`; 
+    const drag = (x, y) => {
+      if (!isDragging) return;
+      menu.style.left = `${x - offsetX}px`;
+      menu.style.top = `${y - offsetY}px`;
       menu.style.transform = 'translateX(0)';
     };
 
+    // começa centralizado
     menu.style.left = '50%';
     menu.style.transform = 'translateX(-50%)';
 
-    menu.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
+    // mouse
+    menu.addEventListener('mousedown', e => startDrag(e, e.clientX, e.clientY));
     document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
     document.addEventListener('mouseup', () => isDragging = false);
 
-    menu.addEventListener('touchstart', e => { 
-      const t = e.touches[0]; 
-      startDrag(t.clientX, t.clientY); 
-      e.preventDefault(); 
+    // touch (não bloqueia o botão X)
+    menu.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      if (!t) return;
+      if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
+      startDrag(e, t.clientX, t.clientY);
+      // preventDefault só quando for arrastar mesmo
+      e.preventDefault();
     }, { passive: false });
-    document.addEventListener('touchmove', e => { 
-      const t = e.touches[0]; 
-      drag(t.clientX, t.clientY); 
+
+    document.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      if (t) drag(t.clientX, t.clientY);
     }, { passive: false });
-    document.addEventListener('touchend', () => isDragging = false);
+
+    document.addEventListener('touchend', () => { isDragging = false; });
   };
 
   setupUI();
