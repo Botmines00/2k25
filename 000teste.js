@@ -19,10 +19,10 @@
     const tile = document.createElement('div');
     tile.className = 'tile-wrapper';
     tile.style.cssText = `
-      width: 28px; height: 28px; border-radius: 6px;
+      width: 26px; height: 26px; border-radius: 6px;
       background-color: ${corData.cor}; display: flex;
       justify-content: center; align-items: center;
-      font-size: 14px; font-weight: bold;
+      font-size: 13px; font-weight: bold;
       color: ${corData.texto}; margin: 0 4px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     `;
@@ -180,38 +180,48 @@
 
       #blazeMenu {
         position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
-        width: 250px; background-color: rgba(29, 32, 39, 0.95);
+        width: 220px; background-color: rgba(29, 32, 39, 0.95);
         color: white; font-family: 'Inter', sans-serif;
         border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
-        padding: 20px; z-index: 99999; box-sizing: border-box;
+        padding: 16px; z-index: 99999; box-sizing: border-box;
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
+      #blazeMenu .closeBtn {
+        position: absolute; top: 6px; right: 8px;
+        width: 22px; height: 22px; border-radius: 50%;
+        background: rgba(255,255,255,0.12);
+        color: #fff; display: flex; align-items: center; justify-content: center;
+        font-size: 14px; cursor: pointer; user-select: none;
+        transition: transform .15s ease, background .15s ease;
+      }
+      #blazeMenu .closeBtn:hover { transform: scale(1.06); background: rgba(255,255,255,0.2); }
+
       .instagramHeader {
-        font-size: 14px; text-align: center; font-weight: 600;
+        font-size: 13px; text-align: center; font-weight: 600;
         background-color: rgba(0, 0, 0, 0.6);
-        padding: 8px 12px; border-radius: 8px; margin-bottom: 15px;
+        padding: 6px 10px; border-radius: 8px; margin-bottom: 12px;
       }
       .usernameSlider {
         width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box;
       }
       .usernameSlider span {
         display: inline-block; color: #00ff00; font-weight: bold;
-        font-size: 16px; padding-left: 100%;
+        font-size: 15px; padding-left: 100%;
         animation: slide 10s linear infinite;
       }
       #resultSmBox {
-        width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
-        margin: 20px auto; border-radius: 50%;
-        box-shadow: 0 0 25px rgba(255, 60, 89, 0.9);
+        width: 72px; height: 72px; display: flex; justify-content: center; align-items: center;
+        margin: 16px auto; border-radius: 50%;
+        box-shadow: 0 0 22px rgba(255, 60, 89, 0.9);
       }
       #resultNumberCircle {
-        width: 70px; height: 70px; border-radius: 50%;
+        width: 62px; height: 62px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        font-weight: 900; font-size: 36px; color: white;
+        font-weight: 900; font-size: 32px; color: white;
       }
       #sugestaoBox {
-        text-align: center; font-size: 18px; padding: 12px;
-        margin: 20px 0; border-radius: 10px; font-weight: bold; color: white;
+        text-align: center; font-size: 16px; padding: 10px;
+        margin: 16px 0; border-radius: 10px; font-weight: bold; color: white;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -221,19 +231,19 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
       }
       #ultimosResultados {
-        display: flex; justify-content: center; margin: 20px 0 0;
-        padding-top: 15px;
+        display: flex; justify-content: center; margin: 16px 0 0;
+        padding-top: 12px;
         border-top: 1px solid rgba(255, 255, 255, 0.2);
       }
       .statusOnline {
-        text-align: center; font-size: 13px; margin-top: 15px;
+        text-align: center; font-size: 12px; margin-top: 12px;
         color: #00ff00; font-weight: bold;
         background-color: rgba(0, 0, 0, 0.6);
         padding: 5px 10px; border-radius: 8px; display: inline-block;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
       }
       .dotOnline {
-        width: 10px; height: 10px; background-color: #00ff00;
+        width: 9px; height: 9px; background-color: #00ff00;
         border-radius: 50%; display: inline-block;
         margin-right: 8px; animation: pulse 1.5s infinite;
       }
@@ -248,6 +258,7 @@
     const menu = document.createElement('div');
     menu.id = 'blazeMenu';
     menu.innerHTML = `
+      <div class="closeBtn" id="blazeCloseBtn">✕</div>
       <div class="instagramHeader">📲 I.a Double 00</div>
       <div class="usernameSlider"><span>@i.adouble00</span></div>
       <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
@@ -257,15 +268,57 @@
     `;
     document.body.appendChild(menu);
 
+    // Fechar pelo X
+    const closeBtn = document.getElementById('blazeCloseBtn');
+    closeBtn.addEventListener('click', () => { menu.style.display = 'none'; });
+
+    // Mostrar com duplo clique (desktop)
+    document.addEventListener('dblclick', () => {
+      if (menu.style.display === 'none') menu.style.display = 'block';
+    });
+
+    // Mostrar com duplo toque (mobile)
+    let lastTap = 0;
+    document.addEventListener('touchend', () => {
+      const now = Date.now();
+      if (now - lastTap < 300) { // 2 toques em < 300ms
+        if (menu.style.display === 'none') menu.style.display = 'block';
+      }
+      lastTap = now;
+    });
+
     // Drag
     let isDragging = false, offsetX = 0, offsetY = 0;
-    const startDrag = (x, y) => { isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop; };
-    const drag = (x, y) => { if (!isDragging) return; menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`; };
+    const startDrag = (x, y) => { 
+      isDragging = true; 
+      offsetX = x - menu.offsetLeft; 
+      offsetY = y - menu.offsetTop; 
+    };
+    const drag = (x, y) => { 
+      if (!isDragging) return; 
+      menu.style.left = `${x - offsetX}px`; 
+      menu.style.top = `${y - offsetY}px`; 
+      // fixa a posição absoluta para não depender do transform do centro
+      menu.style.transform = 'translateX(0)';
+    };
+
+    // Começa centralizado; ao arrastar, removemos o translateX
+    menu.style.left = '50%';
+    menu.style.transform = 'translateX(-50%)';
+
     menu.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
     document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
     document.addEventListener('mouseup', () => isDragging = false);
-    menu.addEventListener('touchstart', e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
-    document.addEventListener('touchmove', e => { const t = e.touches[0]; drag(t.clientX, t.clientY); }, { passive: false });
+
+    menu.addEventListener('touchstart', e => { 
+      const t = e.touches[0]; 
+      startDrag(t.clientX, t.clientY); 
+      e.preventDefault(); 
+    }, { passive: false });
+    document.addEventListener('touchmove', e => { 
+      const t = e.touches[0]; 
+      drag(t.clientX, t.clientY); 
+    }, { passive: false });
     document.addEventListener('touchend', () => isDragging = false);
   };
 
