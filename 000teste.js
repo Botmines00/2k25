@@ -7,11 +7,7 @@
     2: { nome: '⬛ Preto', cor: '#1d2027', texto: 'white' },
   };
 
-  const getCorPorNumero = (num) => {
-    if (num === 0) return coresMap[0];
-    return num >= 1 && num <= 7 ? coresMap[1] : coresMap[2];
-  };
-
+  const getCorPorNumero = (num) => (num === 0 ? coresMap[0] : (num >= 1 && num <= 7 ? coresMap[1] : coresMap[2]));
   const state = { ultimoId: null, sugestaoCor: null };
 
   const criarTile = (numero) => {
@@ -34,18 +30,15 @@
     const wrapper = document.createElement('div');
     wrapper.id = 'confettiWrapper';
     wrapper.style.cssText = `
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       pointer-events: none; z-index: 999998;
     `;
     for (let i = 0; i < 50; i++) {
       const el = document.createElement('div');
       el.textContent = '💸';
       el.style.cssText = `
-        position: absolute;
-        top: ${Math.random() * 100}%;
-        left: ${Math.random() * 100}%;
-        font-size: ${12 + Math.random() * 16}px;
+        position: absolute; top: ${Math.random() * 100}%;
+        left: ${Math.random() * 100}%; font-size: ${12 + Math.random() * 16}px;
         animation: fall 2.5s linear forwards;
       `;
       wrapper.appendChild(el);
@@ -71,12 +64,12 @@
   };
 
   const atualizarUltimos = () => {
-    const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile')).slice(0, 6).reverse();
+    const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'))
+      .slice(0, 6).reverse();
     const entradas = tiles.map(tile => {
       const numero = tile.innerText.trim();
       if (numero === '') return tile.querySelector('svg') ? 0 : null;
-      const n = parseInt(numero);
-      return isNaN(n) ? null : n;
+      const n = parseInt(numero); return isNaN(n) ? null : n;
     }).filter(n => n !== null);
 
     const box = document.getElementById('ultimosResultados');
@@ -94,10 +87,7 @@
       if (!d || d.id === state.ultimoId) return;
 
       const cor = getCorPorNumero(d.roll);
-      if (state.sugestaoCor !== null) {
-        mostrarResultadoFinal(cor.cor === state.sugestaoCor ? 'win' : 'loss');
-      }
-
+      if (state.sugestaoCor !== null) mostrarResultadoFinal(cor.cor === state.sugestaoCor ? 'win' : 'loss');
       state.ultimoId = d.id;
 
       const resultNumberCircle = document.getElementById('resultNumberCircle');
@@ -106,7 +96,6 @@
         resultNumberCircle.style.background = cor.cor;
         resultNumberCircle.style.color = cor.texto;
       }
-
       const resultSmBox = document.getElementById('resultSmBox');
       if (resultSmBox) resultSmBox.style.backgroundColor = cor.cor;
 
@@ -116,15 +105,10 @@
       const entradas = atualizarUltimos();
       let sugestao = null;
 
-      const corPorNumero = n => {
-        if (n === 0) return 'branco';
-        if (n >= 1 && n <= 7) return 'vermelho';
-        return 'preto';
-      };
+      const corPorNumero = n => (n === 0 ? 'branco' : (n <= 7 ? 'vermelho' : 'preto'));
 
       if (entradas && entradas.length >= 2) {
         const cores = entradas.map(corPorNumero).reverse().join(',');
-
         const padroes = [
           { seq: 'preto,preto,preto', sugestao: 'preto' },
           { seq: 'vermelho,vermelho,vermelho', sugestao: 'vermelho' },
@@ -138,14 +122,9 @@
           { seq: 'vermelho,preto,preto,vermelho', sugestao: 'vermelho' },
           { seq: 'preto,vermelho,vermelho,preto', sugestao: 'preto' },
         ];
-
         for (const padrao of padroes) {
-          if (cores.includes(padrao.seq)) {
-            sugestao = padrao.sugestao;
-            break;
-          }
+          if (cores.includes(padrao.seq)) { sugestao = padrao.sugestao; break; }
         }
-
         if (!sugestao) {
           const corAnterior = corPorNumero(entradas[0]);
           sugestao = corAnterior === 'vermelho' ? 'preto' : 'vermelho';
@@ -167,9 +146,7 @@
       }
 
       atualizarUltimos();
-    } catch (error) {
-      console.error("Erro ao buscar dados da roleta:", error);
-    }
+    } catch (e) { console.error("Erro ao buscar dados da roleta:", e); }
   };
 
   const setupUI = () => {
@@ -177,65 +154,28 @@
     style.textContent = `
       @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
       @keyframes slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-      #blazeMenu {
-        position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
-        width: 220px; background-color: rgba(29, 32, 39, 0.95);
-        color: white; font-family: 'Inter', sans-serif;
-        border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
-        padding: 16px; z-index: 99999; box-sizing: border-box;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+      #blazeMenu{
+        position:fixed; top:100px; left:50%; transform:translateX(-50%);
+        width:220px; background-color:rgba(29,32,39,.95); color:#fff;
+        font-family:'Inter',sans-serif; border-radius:12px;
+        box-shadow:0 8px 25px rgba(0,0,0,.7); padding:16px; z-index:99999;
+        box-sizing:border-box; border:1px solid rgba(255,255,255,.1);
       }
-      #blazeMenu .closeBtn {
-        position: absolute; top: 6px; right: 8px;
-        width: 22px; height: 22px; border-radius: 50%;
-        background: rgba(255,255,255,0.12);
-        color: #fff; display: flex; align-items: center; justify-content: center;
-        font-size: 14px; cursor: pointer; user-select: none;
-        z-index: 1;
+      #blazeMenu .closeBtn{
+        position:absolute; top:6px; right:8px; width:22px; height:22px; border-radius:50%;
+        background:rgba(255,255,255,.12); color:#fff; display:flex; align-items:center; justify-content:center;
+        font-size:14px; cursor:pointer; user-select:none; z-index:1;
       }
-      .instagramHeader {
-        font-size: 13px; text-align: center; font-weight: 600;
-        background-color: rgba(0, 0, 0, 0.6);
-        padding: 6px 10px; border-radius: 8px; margin-bottom: 12px;
-      }
-      .usernameSlider { width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
-      .usernameSlider span {
-        display: inline-block; color: #00ff00; font-weight: bold;
-        font-size: 15px; padding-left: 100%;
-        animation: slide 10s linear infinite;
-      }
-      #resultSmBox {
-        width: 72px; height: 72px; display: flex; justify-content: center; align-items: center;
-        margin: 16px auto; border-radius: 50%;
-        box-shadow: 0 0 22px rgba(255, 60, 89, 0.9);
-      }
-      #resultNumberCircle {
-        width: 62px; height: 62px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 900; font-size: 32px; color: white;
-      }
-      #sugestaoBox {
-        text-align: center; font-size: 16px; padding: 10px;
-        margin: 16px 0; border-radius: 10px; font-weight: bold; color: white;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-      }
-      #ultimosResultados {
-        display: flex; justify-content: center; margin: 16px 0 0;
-        padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      .statusOnline {
-        text-align: center; font-size: 12px; margin-top: 12px;
-        color: #00ff00; font-weight: bold;
-        background-color: rgba(0, 0, 0, 0.6);
-        padding: 5px 10px; border-radius: 8px; display: inline-block;
-      }
-      .dotOnline {
-        width: 9px; height: 9px; background-color: #00ff00;
-        border-radius: 50%; display: inline-block;
-        margin-right: 8px; animation: pulse 1.5s infinite;
-      }
+      .instagramHeader{font-size:13px;text-align:center;font-weight:600;background:rgba(0,0,0,.6);padding:6px 10px;border-radius:8px;margin-bottom:12px;}
+      .usernameSlider{width:100%;overflow:hidden;white-space:nowrap;box-sizing:border-box;}
+      .usernameSlider span{display:inline-block;color:#00ff00;font-weight:bold;font-size:15px;padding-left:100%;animation:slide 10s linear infinite;}
+      #resultSmBox{width:72px;height:72px;display:flex;justify-content:center;align-items:center;margin:16px auto;border-radius:50%;box-shadow:0 0 22px rgba(255,60,89,.9);}
+      #resultNumberCircle{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:32px;color:#fff;}
+      #sugestaoBox{text-align:center;font-size:16px;padding:10px;margin:16px 0;border-radius:10px;font-weight:bold;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.5);cursor:pointer;}
+      #ultimosResultados{display:flex;justify-content:center;margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);}
+      .statusOnline{text-align:center;font-size:12px;margin-top:12px;color:#00ff00;font-weight:bold;background:rgba(0,0,0,.6);padding:5px 10px;border-radius:8px;display:inline-block;}
+      .dotOnline{width:9px;height:9px;background:#00ff00;border-radius:50%;display:inline-block;margin-right:8px;animation:pulse 1.5s infinite;}
+      @keyframes pulse{0%{transform:scale(1);opacity:.8}50%{transform:scale(1.6);opacity:.4}100%{transform:scale(1);opacity:.8}}
     `;
     document.head.appendChild(style);
 
@@ -252,26 +192,29 @@
     `;
     document.body.appendChild(menu);
 
-    // helpers de visibilidade
+    // visibilidade
     const isHidden = () => window.getComputedStyle(menu).display === 'none';
     const showMenu = () => { menu.style.display = 'block'; };
     const hideMenu = () => { menu.style.display = 'none'; };
     const toggleMenu = () => { isHidden() ? showMenu() : hideMenu(); };
 
-    // X fecha (desktop e mobile) e não deixa o evento "sujar" o duplo toque
+    // X fecha
     const closeBtn = document.getElementById('blazeCloseBtn');
     const closeHandler = (e) => { e.preventDefault(); e.stopPropagation(); hideMenu(); };
     closeBtn.addEventListener('click', closeHandler, { passive: false });
     closeBtn.addEventListener('touchend', closeHandler, { passive: false });
 
-    // Duplo clique desktop: toggle
+    // ---- FIX fantasma: coordenação touch x dblclick ----
+    let lastTouchToggle = 0;
+
+    // dblclick desktop (ignora se acabou de vir de touch)
     document.addEventListener('dblclick', (e) => {
-      // se clicar duas vezes no X, já fechou na primeira — evita reabrir
+      if (Date.now() - lastTouchToggle < 600) return; // evita abrir+fechar
       if (e.target.closest('#blazeCloseBtn')) return;
       toggleMenu();
     });
 
-    // Duplo toque mobile robusto (ignora arrasto)
+    // duplo toque mobile robusto
     let tapCount = 0, tapTimer = null, startX = 0, startY = 0, moved = false;
     document.addEventListener('touchstart', (e) => {
       if (e.touches.length > 1) return;
@@ -280,62 +223,49 @@
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-      const t = e.touches[0];
-      if (!t) return;
+      const t = e.touches[0]; if (!t) return;
       if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) > 12) moved = true;
     }, { passive: true });
 
     document.addEventListener('touchend', (e) => {
-      // toque no X não conta para duplo-toque global
       if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
       if (moved) return;
       tapCount++;
       clearTimeout(tapTimer);
       tapTimer = setTimeout(() => {
-        if (tapCount >= 2) toggleMenu();
+        if (tapCount >= 2) {
+          e.preventDefault();                 // não deixa virar dblclick/click
+          lastTouchToggle = Date.now();       // marca para o handler de dblclick
+          toggleMenu();
+        }
         tapCount = 0;
       }, 250);
-    }, { passive: true });
+    }, { passive: false });
+    // ---- FIM FIX ----
 
-    // Drag — não inicia arrasto quando o alvo é o botão X
+    // Drag (não inicia em cima do X)
     let isDragging = false, offsetX = 0, offsetY = 0;
     const startDrag = (evt, x, y) => {
       if (evt.target && evt.target.closest && evt.target.closest('#blazeCloseBtn')) return;
-      isDragging = true;
-      offsetX = x - menu.offsetLeft;
-      offsetY = y - menu.offsetTop;
+      isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop;
     };
     const drag = (x, y) => {
       if (!isDragging) return;
-      menu.style.left = `${x - offsetX}px`;
-      menu.style.top = `${y - offsetY}px`;
+      menu.style.left = `${x - offsetX}px`; menu.style.top = `${y - offsetY}px`;
       menu.style.transform = 'translateX(0)';
     };
-
-    // começa centralizado
-    menu.style.left = '50%';
-    menu.style.transform = 'translateX(-50%)';
-
-    // mouse
+    menu.style.left = '50%'; menu.style.transform = 'translateX(-50%)';
     menu.addEventListener('mousedown', e => startDrag(e, e.clientX, e.clientY));
     document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
     document.addEventListener('mouseup', () => isDragging = false);
-
-    // touch (não bloqueia o botão X)
     menu.addEventListener('touchstart', e => {
-      const t = e.touches[0];
-      if (!t) return;
+      const t = e.touches[0]; if (!t) return;
       if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
-      startDrag(e, t.clientX, t.clientY);
-      // preventDefault só quando for arrastar mesmo
-      e.preventDefault();
+      startDrag(e, t.clientX, t.clientY); e.preventDefault();
     }, { passive: false });
-
     document.addEventListener('touchmove', e => {
-      const t = e.touches[0];
-      if (t) drag(t.clientX, t.clientY);
+      const t = e.touches[0]; if (t) drag(t.clientX, t.clientY);
     }, { passive: false });
-
     document.addEventListener('touchend', () => { isDragging = false; });
   };
 
