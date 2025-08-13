@@ -8,7 +8,7 @@
     2: { nome: '⬛ Preto', cor: '#1d2027', texto: 'white' },
   };
   const getCorPorNumero = (n) => (n === 0 ? coresMap[0] : (n <= 7 ? coresMap[1] : coresMap[2]));
-  const state = { ultimoId: null, sugestaoCor: null };
+  const state = { ultimoId: null, sugestaoCor: null, lastSide: null };
 
   // ---------- STATUS (faixa preta) ----------
   const MENSAGENS = [
@@ -152,32 +152,40 @@
 
       // ===== ATUALIZA O BOTÃO DIVIDIDO =====
       const entradaHeader = document.getElementById('entradaHeader');
-      const ladoVermelho = document.getElementById('btnVermelho');
-      const ladoPreto    = document.getElementById('btnPreto');
+      const red = document.getElementById('btnVermelho');
+      const blk = document.getElementById('btnPreto');
 
-      const setActiveSide = (side) => {
-        // remove estados
-        ladoVermelho.classList.remove('active','inactive');
-        ladoPreto.classList.remove('active','inactive');
+      const applySide = (side) => {
+        red.classList.remove('active-red','dim');
+        blk.classList.remove('active-black','dim');
+
         if (side === 'vermelho') {
-          ladoVermelho.classList.add('active');
-          ladoPreto.classList.add('inactive');
+          red.classList.add('active-red');
+          blk.classList.add('dim');
           entradaHeader.textContent = 'Entrada: Vermelho';
           state.sugestaoCor = '#ff3c59';
+          red.style.setProperty('--accent', '#ff3c59');
         } else if (side === 'preto') {
-          ladoPreto.classList.add('active');
-          ladoVermelho.classList.add('inactive');
+          blk.classList.add('active-black');
+          red.classList.add('dim');
           entradaHeader.textContent = 'Entrada: Preto';
           state.sugestaoCor = '#1d2027';
+          blk.style.setProperty('--accent', '#6b7a90'); // realce do preto (cinza azulado)
         } else {
           entradaHeader.textContent = 'Sem entrada';
           state.sugestaoCor = null;
         }
+
+        // vibração sutil ao mudar de lado (mobile)
+        if (side && state.lastSide !== side && 'vibrate' in navigator) {
+          navigator.vibrate?.(15);
+        }
+        state.lastSide = side || null;
       };
 
-      if (sugestao === 'vermelho') setActiveSide('vermelho');
-      else if (sugestao === 'preto') setActiveSide('preto');
-      else setActiveSide(null);
+      if (sugestao === 'vermelho') applySide('vermelho');
+      else if (sugestao === 'preto') applySide('preto');
+      else applySide(null);
 
       // feedback nas mensagens
       stopStatusCycle();
@@ -195,9 +203,19 @@
     style.textContent = `
       @keyframes fall { to { transform: translateY(100vh); opacity:0; } }
       @keyframes slide { 0% { transform:translateX(100%); } 100% { transform:translateX(-100%); } }
-      @keyframes blink {
-        0%,100% { filter: brightness(1); box-shadow: 0 0 18px rgba(255,255,255,0.15); transform: translateY(0); }
-        50% { filter: brightness(1.25); box-shadow: 0 0 28px rgba(255,255,255,0.35); transform: translateY(-1px); }
+
+      /* Efeitos pro botão profissional */
+      @keyframes neonPulse {
+        0%,100% { box-shadow: 0 0 0 rgba(0,0,0,0), 0 0 18px var(--accent, #fff); filter: saturate(1); }
+        50% { box-shadow: 0 0 0 rgba(0,0,0,0), 0 0 32px var(--accent, #fff); filter: saturate(1.25); }
+      }
+      @keyframes borderFlow {
+        0% { --rot: 0deg; } 100% { --rot: 360deg; }
+      }
+      @keyframes sheen {
+        0% { transform: translateX(-120%); opacity: 0; }
+        40% { opacity: .25; }
+        100% { transform: translateX(120%); opacity: 0; }
       }
 
       #blazeMenu{
@@ -237,26 +255,72 @@
         font-weight:900;font-size:32px;color:#fff;
       }
 
-      /* ---- NOVO: Botão dividido ---- */
+      /* ---- Botão dividido PRO ---- */
       #entradaHeader{
-        text-align:center; font-size:13px; opacity:.9; margin:8px 0 6px; font-weight:600;
+        text-align:center; font-size:13px; opacity:.95; margin:10px 0 8px; font-weight:700;
       }
       .splitAction{
-        display:flex; gap:8px; align-items:center; justify-content:center;
+        display:flex; gap:10px; align-items:center; justify-content:center;
       }
       .half{
-        flex:1; height:42px; border-radius:12px;
+        --accent: #ffffff;
+        position:relative; overflow:hidden;
+        flex:1; height:44px; border-radius:14px;
         display:flex; align-items:center; justify-content:center;
-        font-weight:800; font-size:14px; letter-spacing:.2px;
-        box-shadow:0 3px 10px rgba(0,0,0,.35);
-        transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
-        user-select:none;
+        font-weight:900; font-size:14px; letter-spacing:.25px;
+        border:1px solid rgba(255,255,255,.12);
+        background:
+          radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,.14), transparent 60%),
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12));
+        box-shadow:0 6px 18px rgba(0,0,0,.35);
+        transition: transform .15s ease, filter .15s ease, box-shadow .15s ease, border-color .15s ease;
+        user-select:none; text-transform:capitalize;
       }
-      .half:active{ transform: scale(.98); }
-      #btnVermelho{ background:#ff3c59; color:#fff; }
-      #btnPreto{ background:#1d2027; color:#fff; }
-      .half.inactive{ filter:brightness(.85); opacity:.85; }
-      .half.active{ animation: blink 1.1s infinite; }
+      .half:active{ transform: translateY(1px) scale(.99); }
+
+      /* cores base */
+      #btnVermelho{ color:#fff; background:
+        radial-gradient(140% 100% at 50% -10%, rgba(255,255,255,.20), transparent 55%),
+        linear-gradient(180deg, #ff596f, #ff3c59); }
+      #btnPreto{ color:#fff; background:
+        radial-gradient(140% 100% at 50% -10%, rgba(255,255,255,.15), transparent 55%),
+        linear-gradient(180deg, #2c3340, #1d2027); }
+
+      /* estado reduzido */
+      .half.dim{ filter: saturate(.85) brightness(.92); opacity:.9; }
+
+      /* estado ativo PRO */
+      .half.active-red,
+      .half.active-black{
+        filter: saturate(1.15) brightness(1.02);
+        border-color: rgba(255,255,255,.22);
+        animation: neonPulse 1.1s ease-in-out infinite;
+      }
+      /* anel/borda viva */
+      .half.active-red::before,
+      .half.active-black::before{
+        content:"";
+        position:absolute; inset:-1px; border-radius:inherit; pointer-events:none;
+        background:
+          conic-gradient(from var(--rot,0deg),
+            rgba(255,255,255,.0), rgba(255,255,255,.0) 20%,
+            var(--accent) 35%, rgba(255,255,255,.0) 55%,
+            rgba(255,255,255,.0) 75%, var(--accent) 85%, rgba(255,255,255,.0) 100%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude;
+        padding:1px;
+        animation: borderFlow 3s linear infinite;
+        opacity:.85;
+      }
+      /* brilho passando */
+      .half.active-red::after,
+      .half.active-black::after{
+        content:"";
+        position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+        background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.35) 10%, transparent 20%);
+        transform: translateX(-120%);
+        animation: sheen 1.8s ease-in-out infinite;
+      }
 
       #ultimosResultados{
         display:flex;justify-content:center;margin:16px 0 0;padding-top:12px;
@@ -279,11 +343,10 @@
       <div class="usernameSlider"><span>@i.adouble00</span></div>
       <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
 
-      <!-- NOVO bloco de ação dividido -->
       <div id="entradaHeader">Sem entrada</div>
       <div class="splitAction">
-        <div id="btnVermelho" class="half inactive" aria-label="Apostar no Vermelho">Vermelho</div>
-        <div id="btnPreto" class="half inactive" aria-label="Apostar no Preto">Preto</div>
+        <div id="btnVermelho" class="half dim" aria-label="Apostar no Vermelho">Vermelho</div>
+        <div id="btnPreto" class="half dim" aria-label="Apostar no Preto">Preto</div>
       </div>
 
       <div id="ultimosResultados"></div>
@@ -299,13 +362,13 @@
     const hideMenu = () => { menu.style.display = 'none'; };
     const toggleMenu = () => { isHidden() ? showMenu() : hideMenu(); };
 
-    // X fecha (desktop e mobile)
+    // X fecha
     const closeBtn = document.getElementById('blazeCloseBtn');
     const onClose = (e) => { e.preventDefault(); e.stopPropagation(); hideMenu(); };
     closeBtn.addEventListener('click', onClose, { passive:false });
     closeBtn.addEventListener('touchend', onClose, { passive:false });
 
-    // Toggle estável (fora do menu)
+    // Toggle fora do menu
     const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     if (!isTouch) {
       document.addEventListener('dblclick', (e) => {
@@ -323,7 +386,7 @@
         if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) > 12) moved = true;
       }, { passive:true });
       document.addEventListener('touchend', (e) => {
-        if (e.target.closest('#blazeMenu')) return; // só fora do menu
+        if (e.target.closest('#blazeMenu')) return;
         if (moved) return;
         tapCount++; clearTimeout(tapTimer);
         tapTimer = setTimeout(() => {
@@ -337,8 +400,7 @@
     let isDragging = false, offsetX = 0, offsetY = 0;
     const startDrag = (evt, x, y) => {
       if (evt.target.closest('#blazeCloseBtn')) return;
-      isDragging = true;
-      offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop;
+      isDragging = true; offsetX = x - menu.offsetLeft; offsetY = y - menu.offsetTop;
     };
     const drag = (x, y) => {
       if (!isDragging) return;
