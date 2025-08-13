@@ -17,7 +17,6 @@
     'Entrada Hackeada...'
   ];
   let statusTimer = null, statusEl = null, statusCycling = true;
-
   const setStatus = (msg, ok=false) => {
     if (!statusEl) statusEl = document.getElementById('statusMsg');
     if (!statusEl) return;
@@ -54,9 +53,7 @@
 
   const criarConfetti = () => {
     const wrap = document.createElement('div');
-    wrap.style.cssText = `
-      position:fixed;inset:0;pointer-events:none;z-index:999998;
-    `;
+    wrap.style.cssText = `position:fixed;inset:0;pointer-events:none;z-index:999998;`;
     for (let i = 0; i < 50; i++) {
       const el = document.createElement('div');
       el.textContent = '💸';
@@ -104,16 +101,13 @@
   // ---------- CORE ----------
   const atualizarResultado = async () => {
     try {
-      // roda ciclo enquanto busca/análisa
       startStatusCycle();
-
       const resp = await fetch('https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1');
       const data = await resp.json();
       const d = data[0];
       if (!d || d.id === state.ultimoId) return;
 
       const cor = getCorPorNumero(d.roll);
-
       if (state.sugestaoCor !== null) {
         mostrarResultadoFinal(cor.cor === state.sugestaoCor ? 'win' : 'loss');
       }
@@ -129,14 +123,11 @@
       const resultSmBox = document.getElementById('resultSmBox');
       if (resultSmBox) resultSmBox.style.backgroundColor = cor.cor;
 
-      const sugestaoBox = document.getElementById('sugestaoBox');
-      if (!sugestaoBox) return;
-
       const entradas = atualizarUltimos();
-      let sugestao = null;
 
+      // ===== LÓGICA DE SUGESTÃO =====
       const corPorNumero = n => (n === 0 ? 'branco' : (n <= 7 ? 'vermelho' : 'preto'));
-
+      let sugestao = null;
       if (entradas && entradas.length >= 2) {
         const cores = entradas.map(corPorNumero).reverse().join(',');
         const padroes = [
@@ -159,21 +150,36 @@
         }
       }
 
-      if (sugestao === 'vermelho') {
-        sugestaoBox.textContent = '👉 Apostar no Vermelho';
-        sugestaoBox.style.background = '#ff3c59';
-        state.sugestaoCor = '#ff3c59';
-      } else if (sugestao === 'preto') {
-        sugestaoBox.textContent = '👉 Apostar no Preto';
-        sugestaoBox.style.background = '#1d2027';
-        state.sugestaoCor = '#1d2027';
-      } else {
-        sugestaoBox.textContent = '👉 Sem dados suficientes';
-        sugestaoBox.style.background = '#444';
-        state.sugestaoCor = null;
-      }
+      // ===== ATUALIZA O BOTÃO DIVIDIDO =====
+      const entradaHeader = document.getElementById('entradaHeader');
+      const ladoVermelho = document.getElementById('btnVermelho');
+      const ladoPreto    = document.getElementById('btnPreto');
 
-      // pausa ciclo e mostra "Entrada Hackeada..." por 2s, depois volta a ciclar
+      const setActiveSide = (side) => {
+        // remove estados
+        ladoVermelho.classList.remove('active','inactive');
+        ladoPreto.classList.remove('active','inactive');
+        if (side === 'vermelho') {
+          ladoVermelho.classList.add('active');
+          ladoPreto.classList.add('inactive');
+          entradaHeader.textContent = 'Entrada: Vermelho';
+          state.sugestaoCor = '#ff3c59';
+        } else if (side === 'preto') {
+          ladoPreto.classList.add('active');
+          ladoVermelho.classList.add('inactive');
+          entradaHeader.textContent = 'Entrada: Preto';
+          state.sugestaoCor = '#1d2027';
+        } else {
+          entradaHeader.textContent = 'Sem entrada';
+          state.sugestaoCor = null;
+        }
+      };
+
+      if (sugestao === 'vermelho') setActiveSide('vermelho');
+      else if (sugestao === 'preto') setActiveSide('preto');
+      else setActiveSide(null);
+
+      // feedback nas mensagens
       stopStatusCycle();
       setStatus('Entrada Hackeada...', true);
       setTimeout(() => startStatusCycle(), 2000);
@@ -189,6 +195,10 @@
     style.textContent = `
       @keyframes fall { to { transform: translateY(100vh); opacity:0; } }
       @keyframes slide { 0% { transform:translateX(100%); } 100% { transform:translateX(-100%); } }
+      @keyframes blink {
+        0%,100% { filter: brightness(1); box-shadow: 0 0 18px rgba(255,255,255,0.15); transform: translateY(0); }
+        50% { filter: brightness(1.25); box-shadow: 0 0 28px rgba(255,255,255,0.35); transform: translateY(-1px); }
+      }
 
       #blazeMenu{
         position:fixed; top:100px; left:50%; transform:translateX(-50%);
@@ -203,7 +213,7 @@
         font-size:14px; cursor:pointer; user-select:none; z-index:1;
       }
 
-      /* Faixa preta: só a mensagem, 1 linha, sem quebra */
+      /* Faixa preta topo */
       .headerMsg{
         font-size:13px; text-align:center; font-weight:600;
         background:rgba(0,0,0,.6); padding:6px 10px; border-radius:8px; margin-bottom:12px;
@@ -217,6 +227,7 @@
         display:inline-block; color:#00ff00; font-weight:bold; font-size:15px;
         padding-left:100%; animation:slide 10s linear infinite;
       }
+
       #resultSmBox{
         width:72px;height:72px;display:flex;justify-content:center;align-items:center;
         margin:16px auto;border-radius:50%;box-shadow:0 0 22px rgba(255,60,89,.9);
@@ -225,10 +236,28 @@
         width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;
         font-weight:900;font-size:32px;color:#fff;
       }
-      #sugestaoBox{
-        text-align:center;font-size:16px;padding:10px;margin:16px 0;border-radius:10px;
-        font-weight:bold;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.5);cursor:pointer;
+
+      /* ---- NOVO: Botão dividido ---- */
+      #entradaHeader{
+        text-align:center; font-size:13px; opacity:.9; margin:8px 0 6px; font-weight:600;
       }
+      .splitAction{
+        display:flex; gap:8px; align-items:center; justify-content:center;
+      }
+      .half{
+        flex:1; height:42px; border-radius:12px;
+        display:flex; align-items:center; justify-content:center;
+        font-weight:800; font-size:14px; letter-spacing:.2px;
+        box-shadow:0 3px 10px rgba(0,0,0,.35);
+        transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+        user-select:none;
+      }
+      .half:active{ transform: scale(.98); }
+      #btnVermelho{ background:#ff3c59; color:#fff; }
+      #btnPreto{ background:#1d2027; color:#fff; }
+      .half.inactive{ filter:brightness(.85); opacity:.85; }
+      .half.active{ animation: blink 1.1s infinite; }
+
       #ultimosResultados{
         display:flex;justify-content:center;margin:16px 0 0;padding-top:12px;
         border-top:1px solid rgba(255,255,255,.2);
@@ -249,7 +278,14 @@
       <div class="headerMsg"><span id="statusMsg">Invadindo à Api Blaze...</span></div>
       <div class="usernameSlider"><span>@i.adouble00</span></div>
       <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
-      <div id="sugestaoBox">👉 Aguardando...</div>
+
+      <!-- NOVO bloco de ação dividido -->
+      <div id="entradaHeader">Sem entrada</div>
+      <div class="splitAction">
+        <div id="btnVermelho" class="half inactive" aria-label="Apostar no Vermelho">Vermelho</div>
+        <div id="btnPreto" class="half inactive" aria-label="Apostar no Preto">Preto</div>
+      </div>
+
       <div id="ultimosResultados"></div>
       <div class="statusOnline"><span class="dotOnline"></span>Online</div>
     `;
@@ -269,46 +305,35 @@
     closeBtn.addEventListener('click', onClose, { passive:false });
     closeBtn.addEventListener('touchend', onClose, { passive:false });
 
-    // Toggle estável:
-    // - Desktop: dblclick fora do menu
-    // - Mobile: detector próprio de double-tap fora do menu (sem usar dblclick)
+    // Toggle estável (fora do menu)
     const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
     if (!isTouch) {
       document.addEventListener('dblclick', (e) => {
-        if (e.target.closest('#blazeMenu')) return; // ignora duplo clique dentro do menu
+        if (e.target.closest('#blazeMenu')) return;
         toggleMenu();
       });
     } else {
       let tapCount = 0, tapTimer = null, startX = 0, startY = 0, moved = false;
-
       document.addEventListener('touchstart', (e) => {
         if (e.touches.length > 1) return;
-        const t = e.touches[0];
-        startX = t.clientX; startY = t.clientY; moved = false;
+        const t = e.touches[0]; startX = t.clientX; startY = t.clientY; moved = false;
       }, { passive:true });
-
       document.addEventListener('touchmove', (e) => {
         const t = e.touches[0]; if (!t) return;
         if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) > 12) moved = true;
       }, { passive:true });
-
       document.addEventListener('touchend', (e) => {
         if (e.target.closest('#blazeMenu')) return; // só fora do menu
         if (moved) return;
-        tapCount++;
-        clearTimeout(tapTimer);
+        tapCount++; clearTimeout(tapTimer);
         tapTimer = setTimeout(() => {
-          if (tapCount >= 2) {
-            e.preventDefault(); // evita emulação de dblclick
-            toggleMenu();
-          }
+          if (tapCount >= 2) { e.preventDefault(); toggleMenu(); }
           tapCount = 0;
         }, 250);
       }, { passive:false });
     }
 
-    // -------- DRAG (não inicia em cima do X) ----------
+    // -------- DRAG ----------
     let isDragging = false, offsetX = 0, offsetY = 0;
     const startDrag = (evt, x, y) => {
       if (evt.target.closest('#blazeCloseBtn')) return;
@@ -321,22 +346,15 @@
       menu.style.top = `${y - offsetY}px`;
       menu.style.transform = 'translateX(0)';
     };
-
-    // começa centralizado; ao arrastar, removemos o translateX
     menu.style.left = '50%';
     menu.style.transform = 'translateX(-50%)';
-
-    // mouse
     menu.addEventListener('mousedown', e => startDrag(e, e.clientX, e.clientY));
     document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
     document.addEventListener('mouseup', () => isDragging = false);
-
-    // touch
     menu.addEventListener('touchstart', e => {
       const t = e.touches[0]; if (!t) return;
       if (e.target.closest('#blazeCloseBtn')) return;
-      startDrag(e, t.clientX, t.clientY);
-      e.preventDefault();
+      startDrag(e, t.clientX, t.clientY); e.preventDefault();
     }, { passive:false });
     document.addEventListener('touchmove', e => {
       const t = e.touches[0]; if (t) drag(t.clientX, t.clientY);
