@@ -9,24 +9,34 @@
   const getCorPorNumero = (num) => (num === 0 ? coresMap[0] : (num >= 1 && num <= 7 ? coresMap[1] : coresMap[2]));
   const state = { ultimoId: null, sugestaoCor: null };
 
-  // --- UI helpers ---
+  // ---- STATUS (faixa preta) ----
   const setStatus = (msg, kind='info') => {
     const el = document.getElementById('statusMsg');
     if (!el) return;
     el.textContent = msg;
-    el.style.color = kind === 'ok' ? '#00ff88' : '#9fe89f';
+    el.style.color = (kind === 'ok') ? '#7df7a1' : '#c7f5cf';
   };
 
   let statusTimer = null;
   const startStatusCycle = () => {
     clearInterval(statusTimer);
-    const msgs = ['Aplicando PROX…', 'Localizando padrões…', 'Analisando entradas…'];
+    const msgs = [
+      'Localizando padrões…',
+      'Hackeando banco de dados…',
+      'Buscando entradas…',
+      'Calculando assertividade…',
+      'Checando sequências…'
+    ];
     let i = 0;
     setStatus(msgs[i]);
-    statusTimer = setInterval(() => { i = (i + 1) % msgs.length; setStatus(msgs[i]); }, 1500);
+    statusTimer = setInterval(() => {
+      i = (i + 1) % msgs.length;
+      setStatus(msgs[i]);
+    }, 1500);
   };
   const stopStatusCycle = () => clearInterval(statusTimer);
 
+  // ---- UI auxiliar ----
   const criarTile = (numero) => {
     const corData = getCorPorNumero(numero);
     const tile = document.createElement('div');
@@ -37,7 +47,7 @@
       justify-content: center; align-items: center;
       font-size: 13px; font-weight: bold;
       color: ${corData.texto}; margin: 0 4px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 5px rgba(0,0,0,.3);
     `;
     tile.textContent = numero;
     return tile;
@@ -81,12 +91,12 @@
   };
 
   const atualizarUltimos = () => {
-    const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile')).slice(0, 6).reverse();
+    const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'))
+      .slice(0, 6).reverse();
     const entradas = tiles.map(tile => {
       const numero = tile.innerText.trim();
       if (numero === '') return tile.querySelector('svg') ? 0 : null;
-      const n = parseInt(numero);
-      return isNaN(n) ? null : n;
+      const n = parseInt(numero); return isNaN(n) ? null : n;
     }).filter(n => n !== null);
 
     const box = document.getElementById('ultimosResultados');
@@ -98,7 +108,7 @@
 
   const atualizarResultado = async () => {
     try {
-      startStatusCycle(); // mostra mensagens enquanto busca/análisa
+      startStatusCycle();
       const response = await fetch("https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1");
       const data = await response.json();
       const d = data[0];
@@ -117,7 +127,6 @@
         resultNumberCircle.style.background = cor.cor;
         resultNumberCircle.style.color = cor.texto;
       }
-
       const resultSmBox = document.getElementById('resultSmBox');
       if (resultSmBox) resultSmBox.style.backgroundColor = cor.cor;
 
@@ -169,8 +178,8 @@
         state.sugestaoCor = null;
         startStatusCycle();
       }
-    } catch (error) {
-      console.error("Erro ao buscar dados da roleta:", error);
+    } catch (e) {
+      console.error("Erro ao buscar dados da roleta:", e);
     }
   };
 
@@ -192,13 +201,17 @@
         background:rgba(255,255,255,.12); color:#fff; display:flex; align-items:center; justify-content:center;
         font-size:14px; cursor:pointer; user-select:none; z-index:1;
       }
+
+      /* Faixa preta do topo: só a mensagem, 1 linha, sem quebra */
       .instagramHeader{
         font-size:13px; text-align:center; font-weight:600;
         background:rgba(0,0,0,.6); padding:6px 10px; border-radius:8px; margin-bottom:12px;
-        display:flex; align-items:center; justify-content:center; gap:8px;
+        display:flex; align-items:center; justify-content:center;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        min-height:28px;
       }
-      .instagramHeader .label { opacity:.9 }
-      .instagramHeader #statusMsg { font-weight:700 }
+      #statusMsg{ display:inline-block; white-space:nowrap; }
+
       .usernameSlider{ width:100%; overflow:hidden; white-space:nowrap; box-sizing:border-box; }
       .usernameSlider span{ display:inline-block; color:#00ff00; font-weight:bold; font-size:15px; padding-left:100%; animation:slide 10s linear infinite; }
       #resultSmBox{ width:72px; height:72px; display:flex; justify-content:center; align-items:center; margin:16px auto; border-radius:50%; box-shadow:0 0 22px rgba(255,60,89,.9); }
@@ -216,8 +229,7 @@
     menu.innerHTML = `
       <div class="closeBtn" id="blazeCloseBtn">✕</div>
       <div class="instagramHeader">
-        <span class="label">📲 I.a Double 00 •</span>
-        <span id="statusMsg">Aplicando PROX…</span>
+        <span id="statusMsg">Localizando padrões…</span>
       </div>
       <div class="usernameSlider"><span>@i.adouble00</span></div>
       <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
@@ -228,7 +240,7 @@
     document.body.appendChild(menu);
     startStatusCycle();
 
-    // Visibilidade
+    // Visibilidade + toggle
     const isHidden = () => window.getComputedStyle(menu).display === 'none';
     const showMenu = () => { menu.style.display = 'block'; };
     const hideMenu = () => { menu.style.display = 'none'; };
@@ -240,16 +252,14 @@
     closeBtn.addEventListener('click', closeHandler, { passive: false });
     closeBtn.addEventListener('touchend', closeHandler, { passive: false });
 
-    // --- Toggle por duplo clique/toque ---
+    // Toggle por duplo clique/toque (corrigido)
     const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     if (!isTouch) {
-      // Desktop: só dblclick
       document.addEventListener('dblclick', (e) => {
-        if (e.target.closest('#blazeMenu')) return; // opcional: ignore duplo clique dentro do menu
+        if (e.target.closest('#blazeMenu')) return; // ignora dblclick dentro do menu
         toggleMenu();
       });
     } else {
-      // Mobile: detector próprio de double-tap (sem dblclick)
       let tapCount = 0, tapTimer = null, startX = 0, startY = 0, moved = false;
       document.addEventListener('touchstart', (e) => {
         if (e.touches.length > 1) return;
@@ -263,10 +273,9 @@
       }, { passive: true });
 
       document.addEventListener('touchend', (e) => {
-        // toque dentro do botão X não conta
-        if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
+        // ignora toques dentro do menu para evitar fechar enquanto arrasta/usa
+        if (e.target && e.target.closest && e.target.closest('#blazeMenu')) return;
         if (moved) return;
-        // toque dentro do menu também conta (fecha se estiver aberto)
         tapCount++;
         clearTimeout(tapTimer);
         tapTimer = setTimeout(() => {
@@ -278,7 +287,6 @@
         }, 250);
       }, { passive: false });
     }
-    // --- fim toggle ---
 
     // Drag (não inicia em cima do X)
     let isDragging = false, offsetX = 0, offsetY = 0;
