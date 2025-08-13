@@ -6,9 +6,26 @@
     1: { nome: '🟥 Vermelho', cor: '#ff3c59', texto: 'white' },
     2: { nome: '⬛ Preto', cor: '#1d2027', texto: 'white' },
   };
-
   const getCorPorNumero = (num) => (num === 0 ? coresMap[0] : (num >= 1 && num <= 7 ? coresMap[1] : coresMap[2]));
   const state = { ultimoId: null, sugestaoCor: null };
+
+  // --- UI helpers ---
+  const setStatus = (msg, kind='info') => {
+    const el = document.getElementById('statusMsg');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = kind === 'ok' ? '#00ff88' : '#9fe89f';
+  };
+
+  let statusTimer = null;
+  const startStatusCycle = () => {
+    clearInterval(statusTimer);
+    const msgs = ['Aplicando PROX…', 'Localizando padrões…', 'Analisando entradas…'];
+    let i = 0;
+    setStatus(msgs[i]);
+    statusTimer = setInterval(() => { i = (i + 1) % msgs.length; setStatus(msgs[i]); }, 1500);
+  };
+  const stopStatusCycle = () => clearInterval(statusTimer);
 
   const criarTile = (numero) => {
     const corData = getCorPorNumero(numero);
@@ -64,12 +81,12 @@
   };
 
   const atualizarUltimos = () => {
-    const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'))
-      .slice(0, 6).reverse();
+    const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile')).slice(0, 6).reverse();
     const entradas = tiles.map(tile => {
       const numero = tile.innerText.trim();
       if (numero === '') return tile.querySelector('svg') ? 0 : null;
-      const n = parseInt(numero); return isNaN(n) ? null : n;
+      const n = parseInt(numero);
+      return isNaN(n) ? null : n;
     }).filter(n => n !== null);
 
     const box = document.getElementById('ultimosResultados');
@@ -81,13 +98,17 @@
 
   const atualizarResultado = async () => {
     try {
+      startStatusCycle(); // mostra mensagens enquanto busca/análisa
       const response = await fetch("https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1");
       const data = await response.json();
       const d = data[0];
       if (!d || d.id === state.ultimoId) return;
 
       const cor = getCorPorNumero(d.roll);
-      if (state.sugestaoCor !== null) mostrarResultadoFinal(cor.cor === state.sugestaoCor ? 'win' : 'loss');
+      if (state.sugestaoCor !== null) {
+        mostrarResultadoFinal(cor.cor === state.sugestaoCor ? 'win' : 'loss');
+      }
+
       state.ultimoId = d.id;
 
       const resultNumberCircle = document.getElementById('resultNumberCircle');
@@ -96,6 +117,7 @@
         resultNumberCircle.style.background = cor.cor;
         resultNumberCircle.style.color = cor.texto;
       }
+
       const resultSmBox = document.getElementById('resultSmBox');
       if (resultSmBox) resultSmBox.style.backgroundColor = cor.cor;
 
@@ -135,18 +157,21 @@
         sugestaoBox.textContent = '👉 Apostar no Vermelho';
         sugestaoBox.style.background = '#ff3c59';
         state.sugestaoCor = '#ff3c59';
+        stopStatusCycle(); setStatus('Padrão encontrado • Apostar no Vermelho', 'ok');
       } else if (sugestao === 'preto') {
         sugestaoBox.textContent = '👉 Apostar no Preto';
         sugestaoBox.style.background = '#1d2027';
         state.sugestaoCor = '#1d2027';
+        stopStatusCycle(); setStatus('Padrão encontrado • Apostar no Preto', 'ok');
       } else {
         sugestaoBox.textContent = '👉 Sem dados suficientes';
         sugestaoBox.style.background = '#444';
         state.sugestaoCor = null;
+        startStatusCycle();
       }
-
-      atualizarUltimos();
-    } catch (e) { console.error("Erro ao buscar dados da roleta:", e); }
+    } catch (error) {
+      console.error("Erro ao buscar dados da roleta:", error);
+    }
   };
 
   const setupUI = () => {
@@ -154,6 +179,7 @@
     style.textContent = `
       @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
       @keyframes slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
       #blazeMenu{
         position:fixed; top:100px; left:50%; transform:translateX(-50%);
         width:220px; background-color:rgba(29,32,39,.95); color:#fff;
@@ -166,15 +192,21 @@
         background:rgba(255,255,255,.12); color:#fff; display:flex; align-items:center; justify-content:center;
         font-size:14px; cursor:pointer; user-select:none; z-index:1;
       }
-      .instagramHeader{font-size:13px;text-align:center;font-weight:600;background:rgba(0,0,0,.6);padding:6px 10px;border-radius:8px;margin-bottom:12px;}
-      .usernameSlider{width:100%;overflow:hidden;white-space:nowrap;box-sizing:border-box;}
-      .usernameSlider span{display:inline-block;color:#00ff00;font-weight:bold;font-size:15px;padding-left:100%;animation:slide 10s linear infinite;}
-      #resultSmBox{width:72px;height:72px;display:flex;justify-content:center;align-items:center;margin:16px auto;border-radius:50%;box-shadow:0 0 22px rgba(255,60,89,.9);}
-      #resultNumberCircle{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:32px;color:#fff;}
-      #sugestaoBox{text-align:center;font-size:16px;padding:10px;margin:16px 0;border-radius:10px;font-weight:bold;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.5);cursor:pointer;}
-      #ultimosResultados{display:flex;justify-content:center;margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);}
-      .statusOnline{text-align:center;font-size:12px;margin-top:12px;color:#00ff00;font-weight:bold;background:rgba(0,0,0,.6);padding:5px 10px;border-radius:8px;display:inline-block;}
-      .dotOnline{width:9px;height:9px;background:#00ff00;border-radius:50%;display:inline-block;margin-right:8px;animation:pulse 1.5s infinite;}
+      .instagramHeader{
+        font-size:13px; text-align:center; font-weight:600;
+        background:rgba(0,0,0,.6); padding:6px 10px; border-radius:8px; margin-bottom:12px;
+        display:flex; align-items:center; justify-content:center; gap:8px;
+      }
+      .instagramHeader .label { opacity:.9 }
+      .instagramHeader #statusMsg { font-weight:700 }
+      .usernameSlider{ width:100%; overflow:hidden; white-space:nowrap; box-sizing:border-box; }
+      .usernameSlider span{ display:inline-block; color:#00ff00; font-weight:bold; font-size:15px; padding-left:100%; animation:slide 10s linear infinite; }
+      #resultSmBox{ width:72px; height:72px; display:flex; justify-content:center; align-items:center; margin:16px auto; border-radius:50%; box-shadow:0 0 22px rgba(255,60,89,.9); }
+      #resultNumberCircle{ width:62px; height:62px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:32px; color:#fff; }
+      #sugestaoBox{ text-align:center; font-size:16px; padding:10px; margin:16px 0; border-radius:10px; font-weight:bold; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,.5); cursor:pointer; }
+      #ultimosResultados{ display:flex; justify-content:center; margin:16px 0 0; padding-top:12px; border-top:1px solid rgba(255,255,255,.2); }
+      .statusOnline{ text-align:center; font-size:12px; margin-top:12px; color:#00ff00; font-weight:bold; background:rgba(0,0,0,.6); padding:5px 10px; border-radius:8px; display:inline-block; }
+      .dotOnline{ width:9px; height:9px; background:#00ff00; border-radius:50%; display:inline-block; margin-right:8px; animation:pulse 1.5s infinite; }
       @keyframes pulse{0%{transform:scale(1);opacity:.8}50%{transform:scale(1.6);opacity:.4}100%{transform:scale(1);opacity:.8}}
     `;
     document.head.appendChild(style);
@@ -183,7 +215,10 @@
     menu.id = 'blazeMenu';
     menu.innerHTML = `
       <div class="closeBtn" id="blazeCloseBtn">✕</div>
-      <div class="instagramHeader">📲 I.a Double 00</div>
+      <div class="instagramHeader">
+        <span class="label">📲 I.a Double 00 •</span>
+        <span id="statusMsg">Aplicando PROX…</span>
+      </div>
       <div class="usernameSlider"><span>@i.adouble00</span></div>
       <div id="resultSmBox"><div id="resultNumberCircle"></div></div>
       <div id="sugestaoBox">👉 Aguardando...</div>
@@ -191,8 +226,9 @@
       <div class="statusOnline"><span class="dotOnline"></span>Online</div>
     `;
     document.body.appendChild(menu);
+    startStatusCycle();
 
-    // visibilidade
+    // Visibilidade
     const isHidden = () => window.getComputedStyle(menu).display === 'none';
     const showMenu = () => { menu.style.display = 'block'; };
     const hideMenu = () => { menu.style.display = 'none'; };
@@ -204,44 +240,45 @@
     closeBtn.addEventListener('click', closeHandler, { passive: false });
     closeBtn.addEventListener('touchend', closeHandler, { passive: false });
 
-    // ---- FIX fantasma: coordenação touch x dblclick ----
-    let lastTouchToggle = 0;
+    // --- Toggle por duplo clique/toque ---
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (!isTouch) {
+      // Desktop: só dblclick
+      document.addEventListener('dblclick', (e) => {
+        if (e.target.closest('#blazeMenu')) return; // opcional: ignore duplo clique dentro do menu
+        toggleMenu();
+      });
+    } else {
+      // Mobile: detector próprio de double-tap (sem dblclick)
+      let tapCount = 0, tapTimer = null, startX = 0, startY = 0, moved = false;
+      document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) return;
+        const t = e.touches[0];
+        startX = t.clientX; startY = t.clientY; moved = false;
+      }, { passive: true });
 
-    // dblclick desktop (ignora se acabou de vir de touch)
-    document.addEventListener('dblclick', (e) => {
-      if (Date.now() - lastTouchToggle < 600) return; // evita abrir+fechar
-      if (e.target.closest('#blazeCloseBtn')) return;
-      toggleMenu();
-    });
+      document.addEventListener('touchmove', (e) => {
+        const t = e.touches[0]; if (!t) return;
+        if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) > 12) moved = true;
+      }, { passive: true });
 
-    // duplo toque mobile robusto
-    let tapCount = 0, tapTimer = null, startX = 0, startY = 0, moved = false;
-    document.addEventListener('touchstart', (e) => {
-      if (e.touches.length > 1) return;
-      const t = e.touches[0];
-      startX = t.clientX; startY = t.clientY; moved = false;
-    }, { passive: true });
-
-    document.addEventListener('touchmove', (e) => {
-      const t = e.touches[0]; if (!t) return;
-      if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) > 12) moved = true;
-    }, { passive: true });
-
-    document.addEventListener('touchend', (e) => {
-      if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
-      if (moved) return;
-      tapCount++;
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => {
-        if (tapCount >= 2) {
-          e.preventDefault();                 // não deixa virar dblclick/click
-          lastTouchToggle = Date.now();       // marca para o handler de dblclick
-          toggleMenu();
-        }
-        tapCount = 0;
-      }, 250);
-    }, { passive: false });
-    // ---- FIM FIX ----
+      document.addEventListener('touchend', (e) => {
+        // toque dentro do botão X não conta
+        if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
+        if (moved) return;
+        // toque dentro do menu também conta (fecha se estiver aberto)
+        tapCount++;
+        clearTimeout(tapTimer);
+        tapTimer = setTimeout(() => {
+          if (tapCount >= 2) {
+            e.preventDefault(); // impede emulação de dblclick
+            toggleMenu();
+          }
+          tapCount = 0;
+        }, 250);
+      }, { passive: false });
+    }
+    // --- fim toggle ---
 
     // Drag (não inicia em cima do X)
     let isDragging = false, offsetX = 0, offsetY = 0;
@@ -255,9 +292,11 @@
       menu.style.transform = 'translateX(0)';
     };
     menu.style.left = '50%'; menu.style.transform = 'translateX(-50%)';
+
     menu.addEventListener('mousedown', e => startDrag(e, e.clientX, e.clientY));
     document.addEventListener('mousemove', e => drag(e.clientX, e.clientY));
     document.addEventListener('mouseup', () => isDragging = false);
+
     menu.addEventListener('touchstart', e => {
       const t = e.touches[0]; if (!t) return;
       if (e.target && e.target.closest && e.target.closest('#blazeCloseBtn')) return;
