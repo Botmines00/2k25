@@ -1,16 +1,16 @@
 (() => {
   'use strict';
-  const BOOT_TAG = 'DB_DRAWER_BOOT_V7';
-  if (window[BOOT_TAG]) { try{ window[BOOT_TAG].cleanup?.(); }catch{} }
+  const BOOT_TAG = 'DB_DRAWER_BOOT_V12_DOM8';
+  if (window[BOOT_TAG]) { try { window[BOOT_TAG].cleanup?.(); } catch {} }
 
   // ===== CONFIG =====
   const BG_IMAGE_URL = 'https://i.ibb.co/WWBTZ970/7d95bfc5-10db-4187-b2e8-8517f56904cd.jpg';
   const ENTRY_SECONDS = 5, TICK_MS = 40;
-  const SHOW_100_PROB = 0.85;
-  const MIN_ASSERT = 99.00;
-  const STEP_MS = 120;
+  const SHOW_100_PROB = 0.90;
+  const STEP_MS = 130;
   const BLAZE_API = 'https://blaze.bet.br/api/singleplayer-originals/originals/roulette_games/recent/1';
-  const LAST_N = 8;
+  const LAST_N = 8;            // exatamente 8
+  const KEEP_MAX = 80;
 
   const HACK_LINES = [
     'Desativando firewall...',
@@ -20,12 +20,20 @@
   ];
 
   const state = {
-    barTimer:null, fetchTimer:null, statusTimer:null, lastId:null,
-    vibrateOn:false, audioOn:false,
-    sugestaoNome:null, lastSide:null,
-    predSide:null,
-    isHidden:false,
-    drag:{active:false,startX:0,startY:0,origLeft:0,origTop:0}
+    barTimer: null,
+    fetchTimer: null,
+    statusTimer: null,
+    lastId: null,
+    sugestaoNome: null,
+    lastSide: null,
+    predSide: null,
+    isHidden: false,
+    drag: { active:false, startX:0, startY:0, origLeft:0, origTop:0 },
+    // Estratégias branco
+    afterWhite: 0,
+    whitePlan: { stage:'idle', attacksLeft:0, windowsLeft:0 },
+    // Histórico (API) para lógica
+    histNums: [],
   };
 
   // ===== HANDLE =====
@@ -71,7 +79,10 @@
                    linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
       }
       #db-drawer > *{ position:relative; z-index:1; }
-      .db-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; background:rgba(0,0,0,.5); cursor:grab; touch-action:none; }
+      .db-head{
+        display:flex; align-items:center; justify-content:space-between; gap:8px;
+        padding:10px 12px; background:rgba(0,0,0,.5); cursor:grab; touch-action:none;
+      }
       .db-head.dragging{ cursor:grabbing; }
       .db-status{ font-size:12px; font-weight:800; color:#ff3c59 }
       .db-section{ padding:10px 12px; }
@@ -97,11 +108,12 @@
         border:1px solid rgba(255,255,255,.18); animation:pop .18s ease;
         background:rgba(0, 255, 163, .15); color:#00ffa3;
       }
+      .badge{ display:inline-block; padding:2px 6px; border-radius:999px; font-size:10px; font-weight:900; margin-left:6px; border:1px solid rgba(255,255,255,.18); opacity:.9 }
     `;
     document.head.appendChild(style);
   };
 
-  // ===== Drawer UI =====
+  // ===== Drawer =====
   const buildDrawer = () => {
     if (document.getElementById('db-drawer')) return;
     const box = document.createElement('div');
@@ -141,6 +153,7 @@
   const setStatus = (msg) => { const el = document.getElementById('statusMsg'); if (el) el.textContent = msg; };
   const setRandomStatus = () => setStatus(HACK_LINES[Math.floor(Math.random()*HACK_LINES.length)]);
   const corPorNumero = n => (n === 0 ? 'branco' : (n <= 7 ? 'vermelho' : 'preto'));
+
   const sideFromApi = (d) => {
     if (!d) return null;
     if (typeof d.color === 'string') {
@@ -154,6 +167,31 @@
     return Number.isFinite(n) ? corPorNumero(n) : null;
   };
 
+  const numFromApi = (d) => {
+    const n = Number(d.roll ?? d.number ?? d.result ?? d.value ?? d.slot);
+    if (Number.isFinite(n)) return n;
+    const s = sideFromApi(d);
+    if (s === 'branco') return 0;
+    return null;
+  };
+
+  // === Render “igual tava”: lê do DOM da Blaze (fallback: API) ===
+  const getDomUltimos = () => {
+    try {
+      const nodes = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'));
+      if (!nodes.length) return null;
+      // Pega os primeiros 8 da tira superior e inverte pra ficar mais novo→antigo
+      const picked = nodes.slice(0, LAST_N).reverse();
+      const nums = picked.map(tile => {
+        const t = tile.innerText.trim();
+        if (t === '') return tile.querySelector('svg') ? 0 : null;
+        const v = parseInt(t, 10);
+        return Number.isNaN(v) ? null : v;
+      }).filter(v => v !== null);
+      return { nodes: picked, nums };
+    } catch { return null; }
+  };
+
   const criarTile = (numero) => {
     const n = Number(numero);
     let cor = '#1d2027', txt='#fff';
@@ -164,23 +202,29 @@
     return d;
   };
 
-  const atualizarUltimos = () => {
-    try {
-      const tiles = Array.from(document.querySelectorAll('#roulette-recent .entry .roulette-tile'))
-        .slice(0, LAST_N).reverse();
-      const entradas = tiles.map(tile => {
-        const txt = tile.innerText.trim();
-        if (txt === '') return tile.querySelector('svg') ? 0 : null;
-        const n = parseInt(txt, 10);
-        return Number.isNaN(n) ? null : n;
-      }).filter(n => n !== null);
+  const renderUltimos = () => {
+    const box = document.getElementById('ultimosResultados');
+    if (!box) return;
 
-      const box = document.getElementById('ultimosResultados');
-      if (!box) return entradas;
-      box.innerHTML = '';
-      entradas.slice(0, LAST_N).forEach(num => box.appendChild(criarTile(num)));
-      return entradas;
-    } catch{ return []; }
+    // tenta DOM da Blaze
+    const dom = getDomUltimos();
+    box.innerHTML = '';
+    if (dom && dom.nodes && dom.nodes.length) {
+      dom.nodes.forEach(node => {
+        const clone = node.cloneNode(true);
+        // força tamanho constante do nosso grid
+        clone.style.width = '26px';
+        clone.style.height = '26px';
+        clone.style.borderRadius = '6px';
+        box.appendChild(clone);
+      });
+      return dom.nums;
+    }
+
+    // fallback: nosso tile (usando histórico da API)
+    const arr = state.histNums.slice(0, LAST_N);
+    arr.forEach(num => box.appendChild(criarTile(num)));
+    return arr;
   };
 
   const stopEntryBar = () => {
@@ -193,7 +237,7 @@
     if (label) label.textContent = 'Sem entrada';
   };
 
-  // ASSERTIVIDADE 99~100 com 85% = 100%
+  // ===== Barra com 99–100% =====
   const startEntryBar = (side) => {
     stopEntryBar();
     const wrap = document.querySelector('.entryBg');
@@ -202,17 +246,27 @@
     const pct = document.getElementById('entryPct');
     if (!wrap || !fill || !label || !pct) return;
 
-    const isRed = side === 'vermelho';
-    const fillColor = isRed ? '#ff1744' : '#1d2027';
-    const glowColor = isRed ? '#ff1744' : '#000000';
+    let fillColor = '#ff1744', glowColor = '#ff1744', pctColor = '#fff';
+    if (side === 'vermelho') { fillColor = '#ff1744'; glowColor = '#ff1744'; pctColor = '#fff'; }
+    else if (side === 'preto') { fillColor = '#1d2027'; glowColor = '#000000'; pctColor = '#fff'; }
+    else if (side === 'branco') { fillColor = '#ffffff'; glowColor = '#ffffff'; pctColor = '#000'; }
+
     wrap.style.setProperty('--fill', fillColor);
     wrap.style.setProperty('--glow', glowColor);
-    label.textContent = `Entrar no ${isRed ? 'Vermelho' : 'Preto'}`;
+    pct.style.color = pctColor;
+    label.textContent = `Entrar no ${side[0].toUpperCase()}${side.slice(1)}`;
 
     const force100 = Math.random() < SHOW_100_PROB;
-    let shownVal = force100 ? 100.00 : (99 + Math.random() * (0.999));
-    shownVal = +shownVal.toFixed(2);
-    let stepAcc = 0, elapsed = 0, total = ENTRY_SECONDS * 1000;
+
+    let cents = Math.floor(9900 + Math.random()*100);
+    let elapsed = 0, stepAcc = 0, total = ENTRY_SECONDS * 1000;
+
+    const stepOnce = () => {
+      const bag = [+1, +1, +1, +2, +2, +3, -1, -1];
+      const delta = bag[(Math.random()*bag.length)|0];
+      cents = Math.max(9900, Math.min(9999, cents + delta));
+      if (Math.random() < 0.03) cents = Math.max(9905, cents - (5 + Math.floor(Math.random()*20)));
+    };
 
     state.barTimer = setInterval(() => {
       elapsed += TICK_MS;
@@ -225,25 +279,28 @@
         stepAcc += TICK_MS;
         if (stepAcc >= STEP_MS) {
           stepAcc = 0;
-          const delta = (Math.random() * 0.06) - 0.03;
-          shownVal = Math.min(99.99, Math.max(MIN_ASSERT, +(shownVal + delta).toFixed(2)));
+          stepOnce();
         }
-        pct.textContent = `${fmtBR(shownVal)}%`;
+        const shown = (cents/100);
+        pct.textContent = `${fmtBR(shown)}%`;
       }
 
       if (w >= 100) {
         clearInterval(state.barTimer);
         fill.classList.add('burst');
         setTimeout(()=>fill.classList.remove('burst'), 350);
-        pct.textContent = force100 ? '100%' : pct.textContent;
+        if (force100) pct.textContent = '100%';
       }
     }, TICK_MS);
   };
 
   const applySide = (side) => {
-    if (side === 'vermelho') { state.sugestaoNome = 'vermelho'; startEntryBar('vermelho'); }
-    else if (side === 'preto') { state.sugestaoNome = 'preto'; startEntryBar('preto'); }
-    else { state.sugestaoNome = null; stopEntryBar(); }
+    if (side === 'vermelho' || side === 'preto' || side === 'branco') {
+      state.sugestaoNome = side;
+      startEntryBar(side);
+    } else {
+      state.sugestaoNome = null; stopEntryBar();
+    }
     state.lastSide = side || null;
   };
 
@@ -255,9 +312,77 @@
     tag.id = 'winloss';
     tag.textContent = 'GANHOU';
     root.appendChild(tag);
-    setTimeout(()=> { tag.style.animation = 'floatfade .9s ease forwards';
+    setTimeout(() => {
+      tag.style.animation = 'floatfade .9s ease forwards';
       setTimeout(()=>tag.remove(), 900);
     }, 800);
+  };
+
+  // ===== Estratégias de BRANCO =====
+  const nearWhiteSet = new Set([11,5,12,4]);
+
+  const analisarBranco = () => {
+    const entradas = state.histNums; // novo->antigo (API)
+    const reason = { sug:null, txt:'' };
+    if (entradas.length < 2) return reason;
+
+    if (state.afterWhite > 0) {
+      reason.sug = 'branco'; reason.txt = 'Duplo (irmãos) – pós-branco';
+      return reason;
+    }
+    if (state.whitePlan.stage === 'attacking' && state.whitePlan.attacksLeft > 0) {
+      reason.sug = 'branco'; reason.txt = `Plano Duplo: tentativa (${state.whitePlan.attacksLeft}/3)`;
+      return reason;
+    }
+    const ult5 = entradas.slice(0, 5);
+    const cntNear = ult5.filter(n => nearWhiteSet.has(n)).length;
+    if (cntNear >= 3 || (nearWhiteSet.has(entradas[0]) && nearWhiteSet.has(entradas[1]))) {
+      reason.sug = 'branco'; reason.txt = 'Numerologia (11/5/12/4)';
+      return reason;
+    }
+    const bloco = entradas.slice(0, 50);
+    const whitesInBloco = bloco.filter(n => n === 0).length;
+    if (whitesInBloco >= 8) {
+      reason.sug = 'branco'; reason.txt = 'Pico de brancos (horário mágico)';
+      return reason;
+    }
+    return reason;
+  };
+
+  const updateWhitePlanWithResult = (sideOcorrido) => {
+    if (!sideOcorrido) return;
+    if (sideOcorrido === 'branco') state.afterWhite = 2;
+    else if (state.afterWhite > 0) state.afterWhite -= 1;
+
+    const h = state.histNums;
+    const c0 = h[0] === 0 ? 'branco' : (h[0] <= 7 ? 'vermelho' : 'preto');
+    const c1 = h[1] === 0 ? 'branco' : (h[1] <= 7 ? 'vermelho' : 'preto');
+
+    if (state.whitePlan.stage === 'idle') {
+      if (c0 === 'branco' && c1 === 'branco') {
+        state.whitePlan = { stage:'awaiting_next', attacksLeft:0, windowsLeft:4 };
+      }
+    }
+    if (state.whitePlan.stage === 'awaiting_next') {
+      if (sideOcorrido === 'branco') {
+        state.whitePlan.stage = 'attacking';
+        state.whitePlan.attacksLeft = 3;
+      }
+    } else if (state.whitePlan.stage === 'attacking') {
+      if (sideOcorrido === 'branco') {
+        state.whitePlan = { stage:'idle', attacksLeft:0, windowsLeft:0 };
+      } else {
+        state.whitePlan.attacksLeft = Math.max(0, state.whitePlan.attacksLeft - 1);
+        if (state.whitePlan.attacksLeft === 0) {
+          if (state.whitePlan.windowsLeft > 1) {
+            state.whitePlan.stage = 'awaiting_next';
+            state.whitePlan.windowsLeft -= 1;
+          } else {
+            state.whitePlan = { stage:'idle', attacksLeft:0, windowsLeft:0 };
+          }
+        }
+      }
+    }
   };
 
   // ===== FETCH LOOP =====
@@ -270,42 +395,61 @@
       if (!d || d.id === state.lastId) return;
 
       const atualSide = sideFromApi(d);
+      const atualNum = numFromApi(d);
+
+      if (atualNum !== null) {
+        state.histNums.unshift(atualNum);
+        if (state.histNums.length > KEEP_MAX) state.histNums.length = KEEP_MAX;
+      }
+
+      // Render dos últimos (DOM) + fallback
+      const usados = renderUltimos();
+
+      // Atualiza estratégias e GANHOU
+      updateWhitePlanWithResult(atualSide);
       if (state.predSide && atualSide && (atualSide === state.predSide)) showGanhou();
 
-      atualizarUltimos();
+      // Nova sugestão
+      const w = analisarBranco();
+      if (w.sug) {
+        applySide(w.sug);
+        state.predSide = w.sug;
+        setStatus('Branco: ' + w.txt);
+      } else {
+        const entradas = (usados && usados.length) ? usados : state.histNums.slice(0, LAST_N);
+        const sug = (() => {
+          if (!entradas || entradas.length < 2) return null;
+          const cores = entradas.map(n => (n===0?'branco':(n<=7?'vermelho':'preto'))).reverse().join(',');
+          const padroes = [
+            { seq: 'preto,preto,preto', sugestao: 'preto' },
+            { seq: 'vermelho,vermelho,vermelho', sugestao: 'vermelho' },
+            { seq: 'vermelho,vermelho,vermelho,vermelho', sugestao: 'vermelho' },
+            { seq: 'vermelho,preto,vermelho,preto', sugestao: 'vermelho' },
+            { seq: 'preto,vermelho,preto,vermelho', sugestao: 'preto' },
+            { seq: 'preto,vermelho', sugestao: 'preto' },
+            { seq: 'vermelho,preto', sugestao: 'vermelho' },
+            { seq: 'vermelho,vermelho,preto', sugestao: 'preto' },
+            { seq: 'preto,preto,vermelho', sugestao: 'vermelho' },
+            { seq: 'vermelho,preto,preto,vermelho', sugestao: 'vermelho' },
+            { seq: 'preto,vermelho,vermelho,preto', sugestao: 'preto' },
+          ];
+          for (const p of padroes) if (cores.includes(p.seq)) return p.sugestao;
+          const anterior = (entradas[0]===0?'branco':(entradas[0]<=7?'vermelho':'preto'));
+          return anterior === 'vermelho' ? 'preto' : 'vermelho';
+        })();
 
-      const entradas = atualizarUltimos();
-      const sug = (()=>{
-        if (!entradas || entradas.length < 2) return null;
-        const cores = entradas.map(n => (n===0?'branco':(n<=7?'vermelho':'preto'))).reverse().join(',');
-        const padroes = [
-          { seq: 'preto,preto,preto', sugestao: 'preto' },
-          { seq: 'vermelho,vermelho,vermelho', sugestao: 'vermelho' },
-          { seq: 'vermelho,vermelho,vermelho,vermelho', sugestao: 'vermelho' },
-          { seq: 'vermelho,preto,vermelho,preto', sugestao: 'vermelho' },
-          { seq: 'preto,vermelho,preto,vermelho', sugestao: 'preto' },
-          { seq: 'preto,vermelho', sugestao: 'preto' },
-          { seq: 'vermelho,preto', sugestao: 'vermelho' },
-          { seq: 'vermelho,vermelho,preto', sugestao: 'preto' },
-          { seq: 'preto,preto,vermelho', sugestao: 'vermelho' },
-          { seq: 'vermelho,preto,preto,vermelho', sugestao: 'vermelho' },
-          { seq: 'preto,vermelho,vermelho,preto', sugestao: 'preto' },
-        ];
-        for (const p of padroes) if (cores.includes(p.seq)) return p.sugestao;
-        const anterior = (entradas[0]===0?'branco':(entradas[0]<=7?'vermelho':'preto'));
-        return anterior === 'vermelho' ? 'preto' : 'vermelho';
-      })();
+        applySide(sug);
+        state.predSide = sug;
+        if (!sug) setRandomStatus(); else setStatus('Padrão de cores');
+      }
 
-      applySide(sug);
-      state.predSide = sug;
       state.lastId = d.id;
-      setRandomStatus();
-    } catch(e){
+    } catch {
       setStatus('Falha ao consultar API');
     }
   };
 
-  // ===== Visibilidade com duplo clique / toque =====
+  // ===== Visibilidade / Drag =====
   const setHidden = (hide) => {
     state.isHidden = !!hide;
     const drawer = document.getElementById('db-drawer');
@@ -317,22 +461,15 @@
   const toggleHidden = () => setHidden(!state.isHidden);
 
   const setupDoubleToggle = () => {
-    // desktop
-    document.addEventListener('dblclick', () => { if (!state.drag.active) toggleHidden(); }, {capture:true});
-    // mobile (double tap)
+    document.addEventListener('dblclick', () => { if (!state.drag.active) toggleHidden(); }, { capture:true });
     let lastTap = 0;
     document.addEventListener('touchstart', (e) => {
       const now = Date.now();
-      if (now - lastTap < 320 && !state.drag.active) {
-        toggleHidden();
-        lastTap = 0;
-      } else {
-        lastTap = now;
-      }
-    }, {passive:true, capture:true});
+      if (now - lastTap < 320 && !state.drag.active) { toggleHidden(); lastTap = 0; }
+      else { lastTap = now; }
+    }, { passive:true, capture:true });
   };
 
-  // ===== Drag (arrastável) =====
   const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
   const setupDrag = () => {
     const drawer = document.getElementById('db-drawer');
@@ -369,13 +506,13 @@
     };
 
     head.addEventListener('mousedown', onDown);
-    window.addEventListener('mousemove', onMove, {passive:false});
+    window.addEventListener('mousemove', onMove, { passive:false });
     window.addEventListener('mouseup', onUp);
 
-    head.addEventListener('touchstart', onDown, {passive:false});
-    window.addEventListener('touchmove', onMove, {passive:false});
-    window.addEventListener('touchend', onUp, {passive:true});
-    window.addEventListener('touchcancel', onUp, {passive:true});
+    head.addEventListener('touchstart', onDown, { passive:false });
+    window.addEventListener('touchmove', onMove, { passive:false });
+    window.addEventListener('touchend', onUp, { passive:true });
+    window.addEventListener('touchcancel', onUp, { passive:true });
   };
 
   // ===== Boot =====
@@ -385,11 +522,9 @@
     if (!drawer) return;
     drawer.style.setProperty('--bg', `url('${BG_IMAGE_URL}')`);
 
-    // Botão abrir roleta
     drawer.querySelector('#btnOpen').onclick =
-      ()=> window.open('https://blaze.com/pt/games/double','_blank');
+      () => window.open('https://blaze.com/pt/games/double','_blank');
 
-    // Botão recolher (segue funcionando)
     handleBtn.onclick = () => {
       drawer.classList.toggle('collapsed');
       handleBtn.textContent = drawer.classList.contains('collapsed') ? '☰ Abrir Painel' : '☰ Recolher';
@@ -397,11 +532,9 @@
     if (drawer.classList.contains('collapsed')) drawer.classList.remove('collapsed');
     handleBtn.textContent = '☰ Recolher';
 
-    // Drag + duplo clique/toque
     setupDrag();
     setupDoubleToggle();
 
-    // Loops
     clearInterval(state.fetchTimer);
     state.fetchTimer = setInterval(atualizar, 2000);
 
@@ -409,7 +542,6 @@
     setRandomStatus();
     state.statusTimer = setInterval(setRandomStatus, 3000);
 
-    // Expor cleanup
     window[BOOT_TAG] = {
       cleanup(){
         try{
