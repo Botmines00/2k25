@@ -1,1 +1,78 @@
-(function(_0x3a3241,_0xc82621){const _0x44dbf5=_0x13a1,_0x4a4252=_0x3a3241();while(!![]){try{const _0x4b0d9e=-parseInt(_0x44dbf5(0x126))/0x1*(parseInt(_0x44dbf5(0x13f))/0x2)+-parseInt(_0x44dbf5(0x133))/0x3+-parseInt(_0x44dbf5(0x124))/0x4+parseInt(_0x44dbf5(0x129))/0x5+-parseInt(_0x44dbf5(0x123))/0x6+parseInt(_0x44dbf5(0x128))/0x7+-parseInt(_0x44dbf5(0x13a))/0x8*(-parseInt(_0x44dbf5(0x11f))/0x9);if(_0x4b0d9e===_0xc82621)break;else _0x4a4252['push'](_0x4a4252['shift']());}catch(_0x950737){_0x4a4252['push'](_0x4a4252['shift']());}}}(_0xe5e9,0x2d783),((()=>{const _0x32329a=_0x13a1,_0x335f8c=_0x32329a(0x135),_0x20567a=_0x32329a(0x12b);function _0x563aca(){const _0x5169c7=_0x32329a;if(document[_0x5169c7(0x120)]('loginTela'))return;const _0x38316b=document[_0x5169c7(0x130)](_0x5169c7(0x122));_0x38316b[_0x5169c7(0x136)]=_0x5169c7(0x11c),document[_0x5169c7(0x12c)]['appendChild'](_0x38316b);const _0x483dca=document['createElement'](_0x5169c7(0x13d));_0x483dca['id']=_0x5169c7(0x11e),_0x483dca[_0x5169c7(0x139)]='\x0a\x20\x20\x20\x20\x20\x20<div\x20id=\x22loginBox\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<h2>🧠\x20I.a\x20Double\x2000\x20-\x20Login</h2>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<input\x20id=\x22user\x22\x20type=\x22text\x22\x20placeholder=\x22Usuário\x22\x20/>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<input\x20id=\x22pass\x22\x20type=\x22password\x22\x20placeholder=\x22Senha\x22\x20/>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<button\x20id=\x22entrarBtn\x22>Entrar</button>\x0a\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20',document[_0x5169c7(0x131)][_0x5169c7(0x13e)](_0x483dca),document[_0x5169c7(0x120)](_0x5169c7(0x137))['onclick']=()=>{const _0x1a9150=_0x5169c7,_0x3f1734=document['getElementById'](_0x1a9150(0x13c))[_0x1a9150(0x12e)]['trim'](),_0x507531=document['getElementById'](_0x1a9150(0x138))[_0x1a9150(0x12e)][_0x1a9150(0x12d)]();if(!_0x3f1734||!_0x507531)return alert(_0x1a9150(0x12a));fetch(_0x335f8c)['then'](_0x13afaf=>_0x13afaf[_0x1a9150(0x121)]())['then'](_0x237e6e=>{const _0x581342=_0x1a9150,_0x159ea2=_0x237e6e[_0x581342(0x127)](_0x558d80=>_0x558d80[_0x581342(0x13c)]===_0x3f1734&&_0x558d80['pass']===_0x507531);_0x159ea2?(document[_0x581342(0x120)](_0x581342(0x11e))['remove'](),_0x51897f()):alert('Login\x20inválido!');})['catch'](()=>alert(_0x1a9150(0x125)));};}function _0x51897f(){const _0x5679ea=_0x32329a;fetch(_0x20567a)[_0x5679ea(0x12f)](_0x1fb7b3=>_0x1fb7b3[_0x5679ea(0x11d)]())[_0x5679ea(0x12f)](_0x462e31=>{const _0x3ae0c8=_0x5679ea;console[_0x3ae0c8(0x132)]('✅\x20Script\x20carregado.\x20Executando...'),eval(_0x462e31);})[_0x5679ea(0x13b)](()=>alert(_0x5679ea(0x134)));}_0x563aca();})()));function _0x13a1(_0x5a3ce5,_0x29b905){const _0xe5e95a=_0xe5e9();return _0x13a1=function(_0x13a1b1,_0x12703e){_0x13a1b1=_0x13a1b1-0x11c;let _0x3775c0=_0xe5e95a[_0x13a1b1];return _0x3775c0;},_0x13a1(_0x5a3ce5,_0x29b905);}function _0xe5e9(){const _0x5bf12e=['https://raw.githubusercontent.com/Botmines00/2k25/main/users.json','textContent','entrarBtn','pass','innerHTML','8davGTb','catch','user','div','appendChild','2cmXMXs','\x0a\x20\x20\x20\x20\x20\x20#loginTela\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20position:\x20fixed;\x20top:\x200;\x20left:\x200;\x20width:\x20100vw;\x20height:\x20100vh;\x0a\x20\x20\x20\x20\x20\x20\x20\x20background:\x20rgba(0,\x200,\x200,\x200.9);\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x20justify-content:\x20center;\x20z-index:\x209999999;\x0a\x20\x20\x20\x20\x20\x20\x20\x20font-family:\x20sans-serif;\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20#loginBox\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20background:\x20#111;\x20padding:\x2020px;\x20border-radius:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x200\x2015px\x20#ff073a;\x20width:\x20280px;\x20color:\x20white;\x0a\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x20flex-direction:\x20column;\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20#loginBox\x20h2\x20{\x20color:\x20#ff073a;\x20margin-bottom:\x2015px;\x20}\x0a\x20\x20\x20\x20\x20\x20#loginBox\x20input\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20margin:\x205px\x200;\x20padding:\x2010px;\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x205px;\x20border:\x20none;\x20outline:\x20none;\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20#loginBox\x20button\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20background:\x20#ff073a;\x20border:\x20none;\x20padding:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20margin-top:\x2010px;\x20width:\x20100%;\x20font-weight:\x20bold;\x0a\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x205px;\x20cursor:\x20pointer;\x0a\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20','text','loginTela','6641469vIfgHU','getElementById','json','style','599304SkVDtp','510852zqCvXc','Erro\x20ao\x20verificar\x20login.','256283rkArKZ','find','409668SkpzBO','721360BqNthZ','Preencha\x20os\x20campos.','https://raw.githubusercontent.com/Botmines00/2k25/refs/heads/main/sha256-01.js','head','trim','value','then','createElement','body','log','811842SkwEAc','❌\x20Erro\x20ao\x20carregar\x20o\x20script\x20I.a\x20Double\x2000.'];_0xe5e9=function(){return _0x5bf12e;};return _0xe5e9();}
+(() => {
+  const usersUrl = 'https://doubleblack.shop/users.json';
+  const scriptUrl = 'https://raw.githubusercontent.com/Botmines00/2k25/refs/heads/main/sha256-01.js';
+
+  function criarTelaLogin() {
+    if (document.getElementById('loginTela')) return;
+
+    const style = document.createElement('style');
+    style.textContent = `
+      #loginTela {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.9); display: flex;
+        align-items: center; justify-content: center; z-index: 9999999;
+        font-family: sans-serif;
+      }
+      #loginBox {
+        background: #111; padding: 20px; border-radius: 10px;
+        box-shadow: 0 0 15px #00ff00; width: 280px; color: white;
+        display: flex; flex-direction: column; align-items: center;
+      }
+      #loginBox h2 { color: #00ff00; margin-bottom: 15px; }
+      #loginBox input {
+        margin: 5px 0; padding: 10px; width: 100%;
+        border-radius: 5px; border: none; outline: none;
+      }
+      #loginBox button {
+        background: #00ff00; border: none; padding: 10px;
+        margin-top: 10px; width: 100%; font-weight: bold;
+        border-radius: 5px; cursor: pointer;
+      }
+    `;
+    document.head.appendChild(style);
+
+    const tela = document.createElement('div');
+    tela.id = 'loginTela';
+    tela.innerHTML = `
+      <div id="loginBox">
+        <h2>🧠 Chefe 2k25 - Login</h2>
+        <input id="user" type="text" placeholder="Usuário" />
+        <input id="pass" type="password" placeholder="Senha" />
+        <button id="entrarBtn">Entrar</button>
+      </div>
+    `;
+    document.body.appendChild(tela);
+
+    document.getElementById('entrarBtn').onclick = () => {
+      const user = document.getElementById('user').value.trim();
+      const pass = document.getElementById('pass').value.trim();
+      if (!user || !pass) return alert('Preencha os campos.');
+
+      fetch(usersUrl)
+        .then(r => r.json())
+        .then(users => {
+          const autorizado = users.find(u => u.user === user && u.pass === pass);
+          if (autorizado) {
+            document.getElementById('loginTela').remove();
+            iniciarChefe2k25();
+          } else {
+            alert('Login inválido!');
+          }
+        })
+        .catch(() => alert('Erro ao verificar login.'));
+    };
+  }
+
+  function iniciarChefe2k25() {
+    // Carrega o conteúdo do script e executa
+    fetch(scriptUrl)
+      .then(res => res.text())
+      .then(js => {
+        console.log("✅ Script carregado. Executando...");
+        eval(js); // Executa o JavaScript do Doubleblack1.js
+      })
+      .catch(() => alert("❌ Erro ao carregar o script Chefe 2k25."));
+  }
+
+  criarTelaLogin();
+})();
