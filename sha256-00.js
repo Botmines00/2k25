@@ -1,5 +1,6 @@
 (() => {
-  const usersUrl = 'https://doubleblack.shop/users.json';
+  // Agora pegando do PHP que libera o CORS
+  const usersUrl = 'https://doubleblack.shop/users.php';
   const scriptUrl = 'https://raw.githubusercontent.com/Botmines00/2k25/refs/heads/main/sha256-01.js';
 
   function criarTelaLogin() {
@@ -51,6 +52,7 @@
       fetch(usersUrl)
         .then(r => r.json())
         .then(users => {
+          console.log("🔍 Lista de usuários carregada:", users);
           const autorizado = users.find(u => u.user === user && u.pass === pass);
           if (autorizado) {
             document.getElementById('loginTela').remove();
@@ -59,17 +61,19 @@
             alert('Login inválido!');
           }
         })
-        .catch(() => alert('Erro ao verificar login.'));
+        .catch(err => {
+          console.error("❌ Erro ao verificar login:", err);
+          alert('Erro ao verificar login.');
+        });
     };
   }
 
   function iniciarChefe2k25() {
-    // Carrega o conteúdo do script e executa
     fetch(scriptUrl)
       .then(res => res.text())
       .then(js => {
         console.log("✅ Script carregado. Executando...");
-        eval(js); // Executa o JavaScript do Doubleblack1.js
+        eval(js);
       })
       .catch(() => alert("❌ Erro ao carregar o script Chefe 2k25."));
   }
