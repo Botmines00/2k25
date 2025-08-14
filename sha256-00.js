@@ -16,16 +16,16 @@
       }
       #loginBox {
         background: #111; padding: 20px; border-radius: 10px;
-        box-shadow: 0 0 15px #00ff00; width: 280px; color: white;
+        box-shadow: 0 0 15px #808080; width: 280px; color: white;
         display: flex; flex-direction: column; align-items: center;
       }
-      #loginBox h2 { color: #00ff00; margin-bottom: 15px; }
+      #loginBox h2 { color: #808080; margin-bottom: 15px; }
       #loginBox input {
         margin: 5px 0; padding: 10px; width: 100%;
         border-radius: 5px; border: none; outline: none;
       }
       #loginBox button {
-        background: #00ff00; border: none; padding: 10px;
+        background: #808080; border: none; padding: 10px;
         margin-top: 10px; width: 100%; font-weight: bold;
         border-radius: 5px; cursor: pointer;
       }
@@ -36,7 +36,7 @@
     tela.id = 'loginTela';
     tela.innerHTML = `
       <div id="loginBox">
-        <h2>🧠 Chefe 2k25 - Login</h2>
+        <h2>🧠 i.A SHA256 - Login</h2>
         <input id="user" type="text" placeholder="Usuário" />
         <input id="pass" type="password" placeholder="Senha" />
         <button id="entrarBtn">Entrar</button>
